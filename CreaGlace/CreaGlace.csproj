@@ -8,4 +8,14 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="fondmenu.png" />
+    <None Remove="Gemini_Generated_Image_2s7q482s7q482s7q.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="fondmenu.png" />
+    <Resource Include="Gemini_Generated_Image_2s7q482s7q482s7q.png" />
+  </ItemGroup>
+
 </Project>

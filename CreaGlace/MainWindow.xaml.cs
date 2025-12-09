@@ -11,14 +11,34 @@ using System.Windows.Shapes;
 
 namespace CreaGlace
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Jouer_Click(object sender, RoutedEventArgs e)
+        {
+            // Ouvre la fenêtre du jeu
+            GameWindow game = new GameWindow();
+            game.Show();
+
+            // Fermeture du menu pour passer au jeu
+            this.Close();
+        }
+
+        private void Options_Click(object sender, RoutedEventArgs e)
+        {
+            // Ouvre la fenêtre des options
+            options opt = new options();
+            opt.Show();
+        }
+
+        private void Quitter_Click(object sender, RoutedEventArgs e)
+        {
+            // Quitte l'application
+            Application.Current.Shutdown();
         }
     }
 }
