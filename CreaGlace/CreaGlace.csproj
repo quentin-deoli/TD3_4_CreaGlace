@@ -9,13 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="ChoixCone.png" />
     <None Remove="fondmenu.png" />
-    <None Remove="Gemini_Generated_Image_2s7q482s7q482s7q.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="ChoixCone.png" />
     <Resource Include="fondmenu.png" />
-    <Resource Include="Gemini_Generated_Image_2s7q482s7q482s7q.png" />
   </ItemGroup>
 
 </Project>

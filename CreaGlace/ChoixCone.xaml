@@ -6,10 +6,7 @@
         xmlns:local="clr-namespace:CreaGlace"
         mc:Ignorable="d"
         Title="ChoixCone" Height="450" Width="800">
-    <Grid>
-        <Grid.Background>
-            <ImageBrush ImageSource="/Gemini_Generated_Image_2s7q482s7q482s7q.png"/>
-        </Grid.Background>
-
-    </Grid>
+    <Window.Background>
+        <ImageBrush ImageSource="/ChoixCone.png"/>
+    </Window.Background>
 </Window>

@@ -20,24 +20,22 @@ namespace CreaGlace
 
         private void Jouer_Click(object sender, RoutedEventArgs e)
         {
-            // Ouvre la fenêtre du jeu
-            GameWindow game = new GameWindow();
-            game.Show();
+            // Ouvre la page de choix du cornet
+            ChoixCone choix = new ChoixCone();
+            choix.Show();
 
-            // Fermeture du menu pour passer au jeu
+            // Ferme le menu
             this.Close();
         }
 
         private void Options_Click(object sender, RoutedEventArgs e)
         {
-            // Ouvre la fenêtre des options
-            options opt = new options();
+            Options opt = new Options();
             opt.Show();
         }
 
         private void Quitter_Click(object sender, RoutedEventArgs e)
         {
-            // Quitte l'application
             Application.Current.Shutdown();
         }
     }
