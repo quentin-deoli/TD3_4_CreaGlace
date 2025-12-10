@@ -1,49 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace CreaGlace
 {
-    /// <summary>
-    /// Logique d'interaction pour Options.xaml
-    /// </summary>
     public partial class Options : Window
     {
         public Options()
         {
             InitializeComponent();
+
             BoutonRetour.Click += BoutonRetour_Click;
             BoutonSauvegarder.Click += BoutonSauvegarder_Click;
-            //"Quand on clique sur ce bouton, lance cette fonction"
+
+            // Initialiser les valeurs des TextBlock au démarrage
+            txtMusiqueValeur.Text = $"{SliderMusique.Value:0}%";
+            txtSFXValeur.Text = $"{SlidersSFX.Value:0}%";
         }
+
         private void BoutonRetour_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();// Ferme la fenêtre
+            this.Close();
         }
 
         private void BoutonSauvegarder_Click(object sender, RoutedEventArgs e)
         {
-            // On récupère les valeurs de tes sliders (j'utilise tes noms exacts)
-            double musique = SliderMusique.Value;
-            double sfx = SlidersSFX.Value;
+            // Mettre à jour les paramètres
+            GameSettings.MusicVolume = SliderMusique.Value;
+            GameSettings.SFXVolume = SlidersSFX.Value;
 
-            // Message de confirmation (tu pourras l'enlever plus tard)
-            string message = $"C'est noté !\nMusique : {musique:0}%\nSons : {sfx:0}%";
-
-            MessageBox.Show(message, "Options Glace", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            // Optionnel : Ferme la fenêtre après la sauvegarde
             this.Close();
         }
+
+        // Mise à jour en temps réel du pourcentage musique
+        private void SliderMusique_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            txtMusiqueValeur.Text = $"{SliderMusique.Value:0}%";
+        }
+
+        // Mise à jour en temps réel du pourcentage SFX
+        private void SlidersSFX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            txtSFXValeur.Text = $"{SlidersSFX.Value:0}%";
+        }
+    }
+
+    public static class GameSettings
+    {
+        public static double MusicVolume { get; set; } = 100;
+        public static double SFXVolume { get; set; } = 100;
     }
 }

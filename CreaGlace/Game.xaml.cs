@@ -8,31 +8,34 @@ namespace CreaGlace
     public partial class Game : Window
     {
         private double coneSpeed = 10; // Vitesse de déplacement
+        private int score = 0;          // Score du joueur
 
         public Game(ImageSource coneImage)
         {
             InitializeComponent();
 
-            // Position initiale en bas au centre
-            imgConeChoisi.Source = coneImage;
-            double startX = (canvasJeu.ActualWidth - imgConeChoisi.Width) / 2;
-            double startY = canvasJeu.ActualHeight - imgConeChoisi.Height;
-            Canvas.SetLeft(imgConeChoisi, startX);
-            Canvas.SetTop(imgConeChoisi, startY);
+            // Afficher le cône choisi
+            if (coneImage != null)
+                imgConeChoisi.Source = coneImage;
 
-            // Focus pour capturer les touches
-            this.Loaded += (s, e) => this.Focus();
+            // Position initiale en bas au centre après le rendu
+            this.Loaded += (s, e) =>
+            {
+                double startX = (canvasJeu.ActualWidth - imgConeChoisi.Width) / 2;
+                double startY = canvasJeu.ActualHeight - imgConeChoisi.Height;
+                Canvas.SetLeft(imgConeChoisi, startX);
+                Canvas.SetTop(imgConeChoisi, startY);
+                this.Focus(); // Capturer les touches
+            };
+
+            // Événements
             this.KeyDown += Game_KeyDown;
-
-            // Redimensionner le cône si la fenêtre change
             canvasJeu.SizeChanged += CanvasJeu_SizeChanged;
         }
 
         private void CanvasJeu_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            // Repositionner le cône en bas si la fenêtre change
-            double currentX = Canvas.GetLeft(imgConeChoisi);
-            double currentY = Canvas.GetTop(imgConeChoisi);
+            // Maintenir le cône en bas si la fenêtre change
             Canvas.SetTop(imgConeChoisi, canvasJeu.ActualHeight - imgConeChoisi.Height);
         }
 
@@ -53,6 +56,20 @@ namespace CreaGlace
             }
 
             Canvas.SetLeft(imgConeChoisi, x);
+        }
+
+        // Méthode pour ajouter des points au score
+        public void AjouterScore(int points)
+        {
+            score += points;
+            txtScore.Text = $"Score: {score}";
+        }
+
+        // Méthode pour remettre le score à zéro
+        public void ResetScore()
+        {
+            score = 0;
+            txtScore.Text = $"Score: {score}";
         }
     }
 }
