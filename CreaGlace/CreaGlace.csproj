@@ -12,14 +12,36 @@
     <None Remove="ChoixCone.png" />
     <None Remove="fondmenu.png" />
     <None Remove="glace.jpg" />
+    <None Remove="Images\cone1.png" />
+    <None Remove="Images\cone2.png" />
+    <None Remove="Images\cone3.png" />
+    <None Remove="Images\cone4.png" />
+    <None Remove="Images\fondmenu.png" />
     <None Remove="Images\glace.jpg" />
+    <None Remove="Images\image1.png" />
+    <None Remove="Images\image2.png" />
+    <None Remove="Images\image3.png" />
+    <None Remove="Images\image4.png" />
+    <None Remove="Images\image5.png" />
+    <None Remove="imgFondJeu.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="ChoixCone.png" />
     <Resource Include="fondmenu.png" />
     <Resource Include="glace.jpg" />
+    <Resource Include="Images\cone1.png" />
+    <Resource Include="Images\cone2.png" />
+    <Resource Include="Images\cone3.png" />
+    <Resource Include="Images\cone4.png" />
+    <Resource Include="Images\fondmenu.png" />
     <Resource Include="Images\glace.jpg" />
+    <Resource Include="Images\image1.png" />
+    <Resource Include="Images\image2.png" />
+    <Resource Include="Images\image3.png" />
+    <Resource Include="Images\image4.png" />
+    <Resource Include="Images\image5.png" />
+    <Resource Include="imgFondJeu.png" />
   </ItemGroup>
 
 </Project>

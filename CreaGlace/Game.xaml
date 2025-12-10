@@ -1,0 +1,14 @@
+﻿<Window x:Class="CreaGlace.Game"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Game" Height="450" Width="800">
+    <Window.Background>
+        <ImageBrush ImageSource="/imgFondJeu.png"/>
+    </Window.Background>
+    <Canvas x:Name="canvasJeu">
+       
+
+        <!-- Cône choisi -->
+        <Image x:Name="imgConeChoisi" Width="100" Height="100"/>
+    </Canvas>
+</Window>
