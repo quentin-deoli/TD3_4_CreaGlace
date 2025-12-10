@@ -11,11 +11,15 @@
   <ItemGroup>
     <None Remove="ChoixCone.png" />
     <None Remove="fondmenu.png" />
+    <None Remove="glace.jpg" />
+    <None Remove="Images\glace.jpg" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="ChoixCone.png" />
     <Resource Include="fondmenu.png" />
+    <Resource Include="glace.jpg" />
+    <Resource Include="Images\glace.jpg" />
   </ItemGroup>
 
 </Project>
