@@ -24,6 +24,7 @@
     <None Remove="Images\image4.png" />
     <None Remove="Images\image5.png" />
     <None Remove="imgFondJeu.png" />
+    <None Remove="Sons\winter.mp3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,6 +43,7 @@
     <Resource Include="Images\image4.png" />
     <Resource Include="Images\image5.png" />
     <Resource Include="imgFondJeu.png" />
+    <Resource Include="Sons\winter.mp3" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace CreaGlace
 {
@@ -11,9 +12,12 @@ namespace CreaGlace
             BoutonRetour.Click += BoutonRetour_Click;
             BoutonSauvegarder.Click += BoutonSauvegarder_Click;
 
-            // Initialiser les valeurs des TextBlock au démarrage
+            // Initialiser sliders avec valeurs globales
+            SliderMusique.Value = AudioManager.GetMusicVolume() * 100;
             txtMusiqueValeur.Text = $"{SliderMusique.Value:0}%";
-            txtSFXValeur.Text = $"{SlidersSFX.Value:0}%";
+
+            SliderSFX.Value = AudioManager.GetSFXVolume() * 100;
+            txtSFXValeur.Text = $"{SliderSFX.Value:0}%";
         }
 
         private void BoutonRetour_Click(object sender, RoutedEventArgs e)
@@ -23,29 +27,21 @@ namespace CreaGlace
 
         private void BoutonSauvegarder_Click(object sender, RoutedEventArgs e)
         {
-            // Mettre à jour les paramètres
-            GameSettings.MusicVolume = SliderMusique.Value;
-            GameSettings.SFXVolume = SlidersSFX.Value;
-
+            AudioManager.SetMusicVolume(SliderMusique.Value / 100.0);
+            AudioManager.SetSFXVolume(SliderSFX.Value / 100.0);
             this.Close();
         }
 
-        // Mise à jour en temps réel du pourcentage musique
         private void SliderMusique_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             txtMusiqueValeur.Text = $"{SliderMusique.Value:0}%";
+            AudioManager.SetMusicVolume(SliderMusique.Value / 100.0);
         }
 
-        // Mise à jour en temps réel du pourcentage SFX
-        private void SlidersSFX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void SliderSFX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            txtSFXValeur.Text = $"{SlidersSFX.Value:0}%";
+            txtSFXValeur.Text = $"{SliderSFX.Value:0}%";
+            AudioManager.SetSFXVolume(SliderSFX.Value / 100.0);
         }
-    }
-
-    public static class GameSettings
-    {
-        public static double MusicVolume { get; set; } = 100;
-        public static double SFXVolume { get; set; } = 100;
     }
 }

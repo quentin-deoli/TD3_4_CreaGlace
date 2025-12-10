@@ -24,21 +24,17 @@
             </Setter>
         </Style>
 
-        <!-- Style spécifique pour le bouton "Sauvegarder" avec couleur différente -->
         <Style x:Key="SaveButton" BasedOn="{StaticResource RoundedButton}" TargetType="Button">
             <Setter Property="Background" Value="#FF83C2"/>
         </Style>
     </Window.Resources>
 
-    <!-- Fond coloré -->
     <Grid>
         <Image Source="Glace.jpg" Stretch="Fill"/>
 
-        <!-- Panneau blanc semi-transparent -->
         <Border Width="400" Height="300" Background="#CCFFFFFF" CornerRadius="20" HorizontalAlignment="Center" VerticalAlignment="Center">
             <StackPanel Margin="20">
 
-                <!-- Titre -->
                 <TextBlock Text="PARAMÈTRES" FontSize="28" FontWeight="Bold" Foreground="#00CFFF" HorizontalAlignment="Center" Margin="0,0,0,20"/>
 
                 <!-- Volume Musique -->
@@ -51,7 +47,7 @@
                 <!-- Volume SFX -->
                 <TextBlock Text="Volume SFX" FontWeight="Bold" Margin="0,20,0,0"/>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Slider x:Name="SlidersSFX" Minimum="0" Maximum="100" Width="250" ValueChanged="SlidersSFX_ValueChanged"/>
+                    <Slider x:Name="SliderSFX" Minimum="0" Maximum="100" Width="250" ValueChanged="SliderSFX_ValueChanged"/>
                     <TextBlock x:Name="txtSFXValeur" Text="100%" Width="50" Margin="10,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
 

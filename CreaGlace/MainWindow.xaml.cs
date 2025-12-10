@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace CreaGlace
 {
     public partial class MainWindow : Window
@@ -16,6 +17,9 @@ namespace CreaGlace
         public MainWindow()
         {
             InitializeComponent();
+
+            // Initialiser et jouer la musique Winter.mp3 si ce n'est pas déjà fait
+            AudioManager.InitMusique("Winter.mp3");
         }
 
         private void Jouer_Click(object sender, RoutedEventArgs e)
