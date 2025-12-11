@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Media;
 
 namespace CreaGlace
@@ -9,38 +10,48 @@ namespace CreaGlace
         private static double musiqueVolume = 1.0;
         private static double sfxVolume = 1.0;
 
-        // Initialiser la musique de fond
-        public static void InitMusique(string musiqueFile)
+        // Initialiser et lancer la musique en boucle
+        public static void InitMusique(string fichier)
         {
-            musiquePlayer.Open(new Uri($"pack://application:,,,/Resources/Sons/{musiqueFile}"));
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Sons", fichier);
+            if (!File.Exists(path)) return;
+
+            musiquePlayer.Open(new Uri(path, UriKind.Absolute));
             musiquePlayer.Volume = musiqueVolume;
-            musiquePlayer.MediaEnded += (s, e) => musiquePlayer.Position = TimeSpan.Zero; // boucle
+            musiquePlayer.MediaEnded += (s, e) =>
+            {
+                musiquePlayer.Position = TimeSpan.Zero;
+                musiquePlayer.Play();
+            };
             musiquePlayer.Play();
         }
 
-        // Musique
+        // Jouer un SFX (compatible WAV/MP3)
+        public static void PlaySFX(string fichier)
+        {
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Sons", fichier);
+            if (!File.Exists(path)) return;
+
+            MediaPlayer sfx = new MediaPlayer();
+            sfx.Open(new Uri(path, UriKind.Absolute));
+            sfx.Volume = sfxVolume;
+            sfx.Play();
+        }
+
+        // Modifier le volume
         public static void SetMusicVolume(double volume)
         {
             musiqueVolume = volume;
             musiquePlayer.Volume = musiqueVolume;
         }
 
-        public static double GetMusicVolume() => musiqueVolume;
-
-        // SFX
         public static void SetSFXVolume(double volume)
         {
             sfxVolume = volume;
         }
 
+        // Getters pour Options.cs
+        public static double GetMusicVolume() => musiqueVolume;
         public static double GetSFXVolume() => sfxVolume;
-
-        public static void PlaySFX(string nomFichier)
-        {
-            MediaPlayer sfxPlayer = new MediaPlayer();
-            sfxPlayer.Open(new Uri($"pack://application:,,,/Resources/Sounds/{nomFichier}"));
-            sfxPlayer.Volume = sfxVolume;
-            sfxPlayer.Play();
-        }
     }
 }

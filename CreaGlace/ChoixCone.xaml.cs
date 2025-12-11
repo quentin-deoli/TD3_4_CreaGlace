@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -20,29 +19,20 @@ namespace CreaGlace
             Button btn = sender as Button;
             Image img = btn.Content as Image;
 
-            // Reset l'ancien cône si différent
             if (selectedImage != null && selectedImage != img)
-            {
                 AnimateToNormal(selectedImage);
-            }
 
             selectedImage = img;
-
-            // Agrandir le cône sélectionné
             AnimateToBig(img);
         }
 
         private void AnimateToBig(Image img)
         {
             ScaleTransform scale = img.RenderTransform as ScaleTransform;
-
-            DoubleAnimation anim = new DoubleAnimation()
+            DoubleAnimation anim = new DoubleAnimation(1.3, TimeSpan.FromMilliseconds(150))
             {
-                To = 1.3,
-                Duration = TimeSpan.FromMilliseconds(150),
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
             };
-
             scale.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
             scale.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
         }
@@ -50,14 +40,10 @@ namespace CreaGlace
         private void AnimateToNormal(Image img)
         {
             ScaleTransform scale = img.RenderTransform as ScaleTransform;
-
-            DoubleAnimation anim = new DoubleAnimation()
+            DoubleAnimation anim = new DoubleAnimation(1, TimeSpan.FromMilliseconds(150))
             {
-                To = 1,
-                Duration = TimeSpan.FromMilliseconds(150),
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
             };
-
             scale.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
             scale.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
         }
@@ -70,10 +56,7 @@ namespace CreaGlace
                 return;
             }
 
-            // Passer directement le ImageSource au jeu
-            ImageSource selectedConeSource = selectedImage.Source;
-
-            Game game = new Game(selectedConeSource);
+            Game game = new Game(selectedImage.Source);
             game.Show();
             this.Close();
         }

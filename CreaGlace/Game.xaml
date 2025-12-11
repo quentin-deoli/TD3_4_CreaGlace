@@ -18,7 +18,18 @@
                    Canvas.Left="10"
                    Canvas.Top="10"/>
 
-        <!-- Cône choisi -->
-        <Image x:Name="imgConeChoisi" Width="100" Height="100"/>
+        <!-- Temps écoulé en haut à droite -->
+        <TextBlock x:Name="txtTemps"
+                   Text="Temps: 00:00"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   Foreground="White"
+                   Canvas.Right="10"
+                   Canvas.Top="10"/>
+
+        <!-- Cône choisi (en bas du Canvas par défaut) -->
+        <Image x:Name="imgConeChoisi"
+               Width="100"
+               Height="100"/>
     </Canvas>
 </Window>
