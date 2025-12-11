@@ -17,13 +17,13 @@ namespace CreaGlace
         private int score = 0;
         private Random random = new Random();
         private List<Image> boulesEmpilees = new List<Image>();
-        private double bouleFallSpeed = 2;
-        private int spawnDelay = 1500;
-        private DateTime lastSpeedIncrease = DateTime.Now;
+        private double bouleFallSpeed;
+        private int spawnDelay;
         private int boulesAuSol = 0;
         private const int hauteurMax = 50;
 
-        // Variables pour le temps
+        // Progression
+        private double zoneSpawnOffset = 150; // zone initiale autour du cone
         private DateTime debutPartie;
         private System.Windows.Threading.DispatcherTimer timer;
 
@@ -45,12 +45,15 @@ namespace CreaGlace
 
             this.KeyDown += Game_KeyDown;
             canvasJeu.SizeChanged += CanvasJeu_SizeChanged;
-
             CompositionTarget.Rendering += UpdateBoules;
+
+            // Début facile
+            bouleFallSpeed = 1.5;
+            spawnDelay = 1800;
 
             StartSpawnBoules();
 
-            // Initialiser le temps
+            // Timer pour la progression
             debutPartie = DateTime.Now;
             timer = new System.Windows.Threading.DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(1);
@@ -66,10 +69,8 @@ namespace CreaGlace
         private void Game_KeyDown(object sender, KeyEventArgs e)
         {
             double x = Canvas.GetLeft(imgConeChoisi);
-
             if (e.Key == Key.Left) x = Math.Max(0, x - coneSpeed);
             if (e.Key == Key.Right) x = Math.Min(canvasJeu.ActualWidth - imgConeChoisi.Width, x + coneSpeed);
-
             Canvas.SetLeft(imgConeChoisi, x);
 
             foreach (var boule in boulesEmpilees)
@@ -79,11 +80,23 @@ namespace CreaGlace
             }
         }
 
-        // Met à jour le temps
         private void Timer_Tick(object sender, EventArgs e)
         {
+            // Afficher le temps
             TimeSpan tempsEcoule = DateTime.Now - debutPartie;
             txtTemps.Text = $"Temps: {tempsEcoule.Minutes:D2}:{tempsEcoule.Seconds:D2}";
+
+            // Progression : boules plus rapides
+            bouleFallSpeed += 0.05;
+
+            // Zone spawn augmente progressivement (+10 px par seconde)
+            zoneSpawnOffset = Math.Min(350, zoneSpawnOffset + 10);
+
+            // SpawnDelay légèrement plus rapide, mais pas trop
+            spawnDelay = Math.Max(500, spawnDelay - 5);
+
+            // On peut augmenter légèrement la vitesse du cone si nécessaire
+            coneSpeed = 10 + (zoneSpawnOffset - 150) / 20.0; // vitesse du cone augmente pour suivre
         }
 
         public void AjouterScore(int points)
@@ -110,7 +123,12 @@ namespace CreaGlace
                 Source = new BitmapImage(new Uri($"Images/image{random.Next(1, 6)}.png", UriKind.Relative))
             };
 
-            double x = random.Next(0, (int)(canvasJeu.ActualWidth - boule.Width));
+            // Boules apparaissent autour du cone, zone qui augmente avec le temps
+            double coneX = Canvas.GetLeft(imgConeChoisi);
+            double zoneMin = Math.Max(0, coneX - zoneSpawnOffset);
+            double zoneMax = Math.Min(canvasJeu.ActualWidth - boule.Width, coneX + zoneSpawnOffset);
+            double x = random.Next((int)zoneMin, (int)zoneMax);
+
             Canvas.SetLeft(boule, x);
             Canvas.SetTop(boule, -80);
             canvasJeu.Children.Add(boule);
@@ -134,7 +152,7 @@ namespace CreaGlace
                     canvasJeu.Children.Remove(boule);
                     if (boulesAuSol >= 3)
                     {
-                        timer.Stop(); // Arrêter le timer
+                        timer.Stop();
                         MessageBox.Show("Perdu ! 3 boules au sol.");
                     }
                     continue;
@@ -157,13 +175,6 @@ namespace CreaGlace
                     AudioManager.PlaySFX("glacesfx.wav");
                     continue;
                 }
-            }
-
-            if ((DateTime.Now - lastSpeedIncrease).TotalSeconds >= 7)
-            {
-                bouleFallSpeed += 0.7;
-                spawnDelay = Math.Max(450, spawnDelay - 100);
-                lastSpeedIncrease = DateTime.Now;
             }
         }
 
