@@ -11,6 +11,7 @@
   <ItemGroup>
     <None Remove="ChoixCone.png" />
     <None Remove="fondmenu.png" />
+    <None Remove="gameover.png" />
     <None Remove="glace.jpg" />
     <None Remove="Images\cone1.png" />
     <None Remove="Images\cone2.png" />
@@ -32,6 +33,7 @@
   <ItemGroup>
     <Resource Include="ChoixCone.png" />
     <Resource Include="fondmenu.png" />
+    <Resource Include="gameover.png" />
     <Resource Include="glace.jpg" />
     <Resource Include="Images\cone1.png" />
     <Resource Include="Images\cone2.png" />
