@@ -1,27 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
+using System.Windows.Threading;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace CreaGlace
 {
-    /// <summary>
-    /// Logique d'interaction pour Regle.xaml
-    /// </summary>
     public partial class Regle : Window
     {
-        public Regle()
+        private DispatcherTimer timer;
+        private ImageSource coneImage; // sauvegarder le cône choisi
+
+        public Regle(ImageSource selectedCone)
         {
             InitializeComponent();
+            coneImage = selectedCone;
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(3); 
+            timer.Tick += Timer_Tick;
+            timer.Start();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            timer.Stop();
+
+            // Ouvrir Game avec le cône sélectionné
+            Game partie = new Game(coneImage);
+            partie.Show();
+
+            this.Close();
         }
     }
 }

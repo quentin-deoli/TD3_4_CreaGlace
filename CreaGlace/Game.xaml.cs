@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -12,65 +11,50 @@ namespace CreaGlace
 {
     public partial class Game : Window
     {
-        // --- 1. VARIABLES ---
         private Random random = new Random();
 
-        // Listes pour gérer les objets
         private List<Image> boulesTombantes = new List<Image>();
         private List<Image> boulesEmpilees = new List<Image>();
 
-        // Timers
-        private DispatcherTimer moteurJeu;       // Gère le mouvement (60 fois par seconde)
-        private DispatcherTimer timerProgression; // Gère le temps (1 fois par seconde)
+        private DispatcherTimer moteurJeu;
+        private DispatcherTimer timerProgression;
 
-        // Paramètres de jeu (Valeurs originales)
         private double coneSpeed = 10;
-        private double bouleFallSpeed = 1.5; // Vitesse initiale lente
-        private int spawnDelay = 1800;       // Délai initial (en millisecondes)
-        private DateTime prochainSpawn;      // Pour savoir quand faire apparaitre la prochaine
+        private double bouleFallSpeed = 1.5;
+        private int spawnDelay = 1800;
+        private DateTime prochainSpawn;
 
-        // Progression
         private double zoneSpawnOffset = 150;
         private DateTime debutPartie;
         private int boulesAuSol = 0;
         private int score = 0;
-        private const int hauteurMax = 50; // Distance du haut de l'écran
+        private const int hauteurMax = 50;
 
         public Game(ImageSource coneImage)
         {
             InitializeComponent();
 
-            // Image du cône
             if (coneImage != null)
                 imgConeChoisi.Source = coneImage;
 
-            // Événements
             this.Loaded += Game_Loaded;
             this.KeyDown += Game_KeyDown;
             this.SizeChanged += Game_SizeChanged;
 
-            // Initialisation du MOTEUR PHYSIQUE (boucle rapide ~60 FPS)
-            moteurJeu = new DispatcherTimer();
-            moteurJeu.Interval = TimeSpan.FromMilliseconds(16);
+            moteurJeu = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
             moteurJeu.Tick += MoteurJeu_Tick;
             moteurJeu.Start();
 
-            // Initialisation du TIMER PROGRESSION (boucle lente 1 seconde)
-            timerProgression = new DispatcherTimer();
-            timerProgression.Interval = TimeSpan.FromSeconds(1);
+            timerProgression = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             timerProgression.Tick += TimerProgression_Tick;
             timerProgression.Start();
 
-            // Initialisation du temps
             debutPartie = DateTime.Now;
-            prochainSpawn = DateTime.Now; // La première boule arrive tout de suite
+            prochainSpawn = DateTime.Now;
         }
-
-        // --- 2. CONFIGURATION ET TOUCHES ---
 
         private void Game_Loaded(object sender, RoutedEventArgs e)
         {
-            // Centrer le cône
             double startX = (canvasJeu.ActualWidth - imgConeChoisi.Width) / 2;
             double startY = canvasJeu.ActualHeight - imgConeChoisi.Height;
             Canvas.SetLeft(imgConeChoisi, startX);
@@ -92,7 +76,6 @@ namespace CreaGlace
 
             Canvas.SetLeft(imgConeChoisi, x);
 
-            // Déplacer toute la pile avec le cône
             foreach (var boule in boulesEmpilees)
             {
                 double offsetX = (imgConeChoisi.Width - boule.Width) / 2;
@@ -100,49 +83,31 @@ namespace CreaGlace
             }
         }
 
-        // --- 3. PROGRESSION (Toutes les secondes) ---
-
         private void TimerProgression_Tick(object sender, EventArgs e)
         {
-            // Affichage Temps
             TimeSpan tempsEcoule = DateTime.Now - debutPartie;
             txtTemps.Text = $"Temps: {tempsEcoule.Minutes:D2}:{tempsEcoule.Seconds:D2}";
 
-            // LOGIQUE DE PROGRESSION ORIGINALE
-            bouleFallSpeed += 0.05; // Les boules accélèrent un peu
-            zoneSpawnOffset = Math.Min(350, zoneSpawnOffset + 10); // La zone s'élargit
-
-            // Le délai réduit (mais pas en dessous de 500ms)
+            bouleFallSpeed += 0.05;
+            zoneSpawnOffset = Math.Min(350, zoneSpawnOffset + 10);
             spawnDelay = Math.Max(500, spawnDelay - 5);
-
-            // Le cône accélère un peu pour suivre le rythme
             coneSpeed = 10 + (zoneSpawnOffset - 150) / 20.0;
         }
 
-        // --- 4. MOTEUR DU JEU (60 fois par seconde) ---
-
         private void MoteurJeu_Tick(object sender, EventArgs e)
         {
-            // A. GESTION DU SPAWN (APPARITION)
-            // On vérifie si l'heure actuelle a dépassé l'heure prévue pour le prochain spawn
             if (DateTime.Now >= prochainSpawn)
             {
                 SpawnBoule();
-                // On programme la prochaine apparition dans "spawnDelay" millisecondes
                 prochainSpawn = DateTime.Now.AddMilliseconds(spawnDelay);
             }
 
-            // B. DEPLACEMENT DES BOULES
-            // On boucle à l'envers pour pouvoir supprimer des éléments proprement
             for (int i = boulesTombantes.Count - 1; i >= 0; i--)
             {
                 Image boule = boulesTombantes[i];
-
-                // 1. Chute
                 double y = Canvas.GetTop(boule) + bouleFallSpeed;
                 Canvas.SetTop(boule, y);
 
-                // 2. Vérifier si touche le sol (PERDU)
                 if (y >= canvasJeu.ActualHeight - boule.Height)
                 {
                     boulesAuSol++;
@@ -150,20 +115,16 @@ namespace CreaGlace
                     boulesTombantes.RemoveAt(i);
 
                     if (boulesAuSol >= 3)
-                    {
-                        FinDePartie();      // Mansour CHANGE
-                    }
+                        FinDePartie();
+
                     continue;
                 }
 
-                // 3. Vérifier collision (GAGNÉ / EMPILÉ)
                 if (VerifierCollision(boule))
                 {
-                    boulesTombantes.RemoveAt(i); // Elle ne tombe plus
-                    EmpilerSurPile(boule);       // Elle se fixe
+                    boulesTombantes.RemoveAt(i);
+                    EmpilerSurPile(boule);
                     AjouterScore(10);
-
-                    // Vérifier si on a atteint le haut
                     CheckHauteurMax();
                 }
             }
@@ -190,33 +151,23 @@ namespace CreaGlace
             boulesTombantes.Add(boule);
         }
 
-        // --- 5. LOGIQUE COLLISIONS ET PILE ---
-
         private bool VerifierCollision(Image boule)
         {
-            // Collision avec le Cône
             if (CollisionBas(boule, imgConeChoisi) && boulesEmpilees.Count == 0)
                 return true;
 
-            // Collision avec la pile existante
             foreach (var b in boulesEmpilees)
-            {
                 if (CollisionBas(boule, b)) return true;
-            }
+
             return false;
         }
 
         private bool CollisionBas(Image bouleQuiTombe, Image obstacle)
         {
-            // Logique simplifiée avec Rect (Rectangle)
-            // On regarde si le bas de la boule touche le haut de l'obstacle
             double ay = Canvas.GetTop(bouleQuiTombe) + bouleQuiTombe.Height;
             double by = Canvas.GetTop(obstacle);
-
-            // Tolérance verticale de 10 pixels
             bool verticalOk = (ay >= by && ay <= by + 10);
 
-            // Chevauchement horizontal
             double ax = Canvas.GetLeft(bouleQuiTombe);
             double bx = Canvas.GetLeft(obstacle);
             bool horizontalOk = (ax + bouleQuiTombe.Width > bx && ax < bx + obstacle.Width);
@@ -226,17 +177,11 @@ namespace CreaGlace
 
         private void EmpilerSurPile(Image boule)
         {
-            // TA METHODE DE SUPERPOSITION
             int pixelsChevauchement = 15;
             double decalageX = (imgConeChoisi.Width - boule.Width) / 2;
             double posX = Canvas.GetLeft(imgConeChoisi) + decalageX;
 
-            double referenceY;
-            if (boulesEmpilees.Count == 0)
-                referenceY = Canvas.GetTop(imgConeChoisi);
-            else
-                referenceY = Canvas.GetTop(boulesEmpilees.Last());
-
+            double referenceY = boulesEmpilees.Count == 0 ? Canvas.GetTop(imgConeChoisi) : Canvas.GetTop(boulesEmpilees[^1]);
             double posY = referenceY - boule.Height + pixelsChevauchement;
 
             Canvas.SetLeft(boule, posX);
@@ -248,23 +193,13 @@ namespace CreaGlace
         {
             if (boulesEmpilees.Count == 0) return;
 
-            // Si la dernière boule dépasse la hauteur max (le haut de l'écran)
-            if (Canvas.GetTop(boulesEmpilees.Last()) <= hauteurMax)
+            if (Canvas.GetTop(boulesEmpilees[^1]) <= hauteurMax)
             {
-                // 1. On supprime visuellement toutes les boules de la pile
                 foreach (var boule in boulesEmpilees)
-                {
                     canvasJeu.Children.Remove(boule);
-                }
 
-                // 2. On vide la liste mémoire
                 boulesEmpilees.Clear();
-
-                // 3. Bonus de points
                 AjouterScore(100);
-
-                // 4. On ne fait rien d'autre : le jeu continue tout seul !
-                // (Optionnel : ajouter un petit son ici)
             }
         }
 
@@ -278,7 +213,13 @@ namespace CreaGlace
         {
             moteurJeu.Stop();
             timerProgression.Stop();
-            MessageBox.Show("Perdu ! 3 boules au sol.");
+
+            TimeSpan tempsEcoule = DateTime.Now - debutPartie;
+            string tempsTexte = $"{tempsEcoule.Minutes:D2}:{tempsEcoule.Seconds:D2}";
+
+            GameOver fenetreGameOver = new GameOver(score, tempsTexte);
+            fenetreGameOver.Show();
+
             this.Close();
         }
     }

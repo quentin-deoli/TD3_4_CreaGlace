@@ -56,8 +56,9 @@ namespace CreaGlace
                 return;
             }
 
-            Game game = new Game(selectedImage.Source);
-            game.Show();
+            // Passer l'image sélectionnée à Regle pour qu'elle puisse ensuite l'envoyer à Game
+            Regle regle = new Regle(selectedImage.Source);
+            regle.Show();
             this.Close();
         }
     }
