@@ -25,9 +25,12 @@
     <None Remove="Images\image4.png" />
     <None Remove="Images\image5.png" />
     <None Remove="imgFondJeu.png" />
+    <None Remove="regle.jpg" />
+    <None Remove="regles.png" />
     <None Remove="Sons\cornetsfx.wav" />
     <None Remove="Sons\glacesfx.wav" />
     <None Remove="Sons\winter.mp3" />
+    <None Remove="touche.jpg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,9 +50,12 @@
     <Resource Include="Images\image4.png" />
     <Resource Include="Images\image5.png" />
     <Resource Include="imgFondJeu.png" />
+    <Resource Include="regle.jpg" />
+    <Resource Include="regles.png" />
     <Resource Include="Sons\cornetsfx.wav" />
     <Resource Include="Sons\glacesfx.wav" />
     <Resource Include="Sons\winter.mp3" />
+    <Resource Include="touche.jpg" />
   </ItemGroup>
 
 </Project>
