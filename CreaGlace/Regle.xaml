@@ -5,8 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CreaGlace"
         mc:Ignorable="d"
-        Title="Regle" Height="450" Width="800">
-    <Window.Background>
-        <ImageBrush ImageSource="/regles.png"/>
-    </Window.Background>
+        Title="Règles du jeu" 
+        Height="450" Width="800"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/regles.png"/>
+        </Grid.Background>
+    </Grid>
 </Window>

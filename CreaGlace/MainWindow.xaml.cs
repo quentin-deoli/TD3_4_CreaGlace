@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Navigation;
 
 namespace CreaGlace
 {
@@ -12,15 +13,19 @@ namespace CreaGlace
 
         private void Jouer_Click(object sender, RoutedEventArgs e)
         {
+            //j'instance la fenetre suivante
             ChoixCone choix = new ChoixCone();
+            //j'affiche la fenetre de choix
             choix.Show();
-            this.Close();
+            //je cache le menu principal(au lieu de fermer c'est mieux)
+            this.Hide();
         }
 
         private void Options_Click(object sender, RoutedEventArgs e)
         {
             Options opt = new Options();
-            opt.Show();
+            //j'utilise ShowDialog() pour que l'utilisateur soit obligé de fermer
+            opt.ShowDialog();
         }
 
         private void Quitter_Click(object sender, RoutedEventArgs e)

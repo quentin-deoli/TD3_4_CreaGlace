@@ -7,7 +7,8 @@ namespace CreaGlace
 {
     public partial class ChoixCone : Window
     {
-        private Image selectedImage = null;
+        // On stocke l'image choisie pour la passer à la fenêtre suivante
+        private ImageSource imageChoisie = null;
 
         public ChoixCone()
         {
@@ -16,50 +17,50 @@ namespace CreaGlace
 
         private void Cone_Click(object sender, RoutedEventArgs e)
         {
-            Button btn = sender as Button;
-            Image img = btn.Content as Image;
+            //On récupère le bouton cliqué
+            Button boutonClique = (Button)sender;
 
-            if (selectedImage != null && selectedImage != img)
-                AnimateToNormal(selectedImage);
+            // On récupère la bordure et l'image à l'intérieur du bouton
+            Border bordureActuelle = (Border)boutonClique.Content;
+            Image imageDansLeBouton = (Image)bordureActuelle.Child;
 
-            selectedImage = img;
-            AnimateToBig(img);
+            //On réinitialise toutes les bordures (on efface la sélection précédente)
+            ReinitialiserBordures();
+
+            //On met en valeur le cône cliqué (Bordure bleue épaisse)
+            bordureActuelle.BorderThickness = new Thickness(4);
+            bordureActuelle.BorderBrush = Brushes.DeepSkyBlue;
+
+            //On sauvegarde l'image source
+            imageChoisie = imageDansLeBouton.Source;
         }
 
-        private void AnimateToBig(Image img)
+        // Petite méthode pour remettre tout à zéro (facile à comprendre)
+        private void ReinitialiserBordures()
         {
-            ScaleTransform scale = img.RenderTransform as ScaleTransform;
-            DoubleAnimation anim = new DoubleAnimation(1.3, TimeSpan.FromMilliseconds(150))
-            {
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
-            };
-            scale.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
-            scale.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
-        }
-
-        private void AnimateToNormal(Image img)
-        {
-            ScaleTransform scale = img.RenderTransform as ScaleTransform;
-            DoubleAnimation anim = new DoubleAnimation(1, TimeSpan.FromMilliseconds(150))
-            {
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
-            };
-            scale.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
-            scale.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
+            Border1.BorderThickness = new Thickness(0);
+            Border2.BorderThickness = new Thickness(0);
+            Border3.BorderThickness = new Thickness(0);
+            Border4.BorderThickness = new Thickness(0);
         }
 
         private void Valider_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedImage == null)
+            // Vérification simple (vu dans le cours page 7 sur les MessageBox)
+            if (imageChoisie == null)
             {
                 MessageBox.Show("Choisis un cône avant de continuer !");
                 return;
             }
 
-            // Passer l'image sélectionnée à Regle pour qu'elle puisse ensuite l'envoyer à Game
-            Regle regle = new Regle(selectedImage.Source);
-            regle.Show();
-            this.Close();
+            // On passe l'information à la fenêtre suivante via le constructeur
+            // C'est de la Programmation Orientée Objet de base (Sequence 3)
+            Regle fenetreRegle = new Regle(imageChoisie);
+
+            fenetreRegle.Show();
+
+            // On cache cette fenêtre
+            this.Hide();
         }
     }
 }

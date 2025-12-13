@@ -11,10 +11,9 @@
         <Grid.Background>
             <ImageBrush ImageSource="/fondmenu.png"/>
         </Grid.Background>
-        <StackPanel HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
 
-            <!-- Titre du jeu -->
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
             <TextBlock Text="Crea'Glace"
                        FontSize="50"
                        FontWeight="Bold"
@@ -22,37 +21,25 @@
                        HorizontalAlignment="Center"
                        Margin="0 0 0 30"/>
 
-            <!-- Bouton Jouer -->
             <Button Content="Jouer"
                     Width="220" Height="55"
                     FontSize="22"
                     Margin="0 0 0 15"
-                    Click="Jouer_Click" Background="#FFECD4AE">
-                <Button.BorderBrush>
-                    <ImageBrush/>
-                </Button.BorderBrush>
-            </Button>
+                    Click="Jouer_Click" 
+                    Background="#FFECD4AE"/>
 
-            <!-- Bouton Options -->
             <Button Content="Options"
                     Width="220" Height="55"
                     FontSize="22"
                     Margin="0 0 0 15"
-                    Click="Options_Click" Background="#FFE4A258">
-                <Button.BorderBrush>
-                    <ImageBrush/>
-                </Button.BorderBrush>
-            </Button>
+                    Click="Options_Click" 
+                    Background="#FFE4A258"/>
 
-            <!-- Bouton Quitter -->
             <Button Content="Quitter"
                     Width="220" Height="55"
                     FontSize="22"
-                    Click="Quitter_Click" Background="#FFF7E8CE">
-                <Button.BorderBrush>
-                    <ImageBrush/>
-                </Button.BorderBrush>
-            </Button>
+                    Click="Quitter_Click" 
+                    Background="#FFF7E8CE"/>
         </StackPanel>
     </Grid>
 </Window>

@@ -5,220 +5,271 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
+using System.Windows.Threading; // Indispensable pour le DispatcherTimer
 
 namespace CreaGlace
 {
     public partial class Game : Window
     {
-        private Random random = new Random();
+        // Outils pour le jeu
+        private Random generateurAleatoire = new Random();
+        private DispatcherTimer moteurJeu;       // Gère les mouvements (60 fps)
+        private DispatcherTimer timerProgression; // Gère le chronomètre
 
+        // Listes pour gérer les objets
         private List<Image> boulesTombantes = new List<Image>();
         private List<Image> boulesEmpilees = new List<Image>();
 
-        private DispatcherTimer moteurJeu;
-        private DispatcherTimer timerProgression;
-
-        private double coneSpeed = 10;
-        private double bouleFallSpeed = 1.5;
-        private int spawnDelay = 1800;
+        // Paramètres de jeu
+        private double vitesseCone = 15;
+        private double vitesseChute = 3;
+        private int delaiSpawn = 1500;   // Temps en ms entre deux boules
         private DateTime prochainSpawn;
 
-        private double zoneSpawnOffset = 150;
+        // État de la partie
         private DateTime debutPartie;
-        private int boulesAuSol = 0;
+        private int viesPerdues = 0;
         private int score = 0;
-        private const int hauteurMax = 50;
+        private const int hauteurMax = 50; // Si la pile atteint le haut, on gagne un bonus
 
-        public Game(ImageSource coneImage)
+        // --- CONSTRUCTEUR ---
+        public Game(ImageSource imageDuCone)
         {
             InitializeComponent();
 
-            if (coneImage != null)
-                imgConeChoisi.Source = coneImage;
+            // 1. On récupère l'image envoyée par la fenêtre précédente
+            if (imageDuCone != null)
+                imgConeChoisi.Source = imageDuCone;
 
+            // 2. Initialisation des Timers (Vu en cours WPF Avancé)
+            moteurJeu = new DispatcherTimer();
+            moteurJeu.Interval = TimeSpan.FromMilliseconds(16); // Environ 60 images/seconde
+            moteurJeu.Tick += BoucleDeJeu_Tick;
+
+            timerProgression = new DispatcherTimer();
+            timerProgression.Interval = TimeSpan.FromSeconds(1);
+            timerProgression.Tick += Chronometre_Tick;
+
+            // 3. Événements de fenêtre
             this.Loaded += Game_Loaded;
             this.KeyDown += Game_KeyDown;
-            this.SizeChanged += Game_SizeChanged;
-
-            moteurJeu = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
-            moteurJeu.Tick += MoteurJeu_Tick;
-            moteurJeu.Start();
-
-            timerProgression = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-            timerProgression.Tick += TimerProgression_Tick;
-            timerProgression.Start();
-
-            debutPartie = DateTime.Now;
-            prochainSpawn = DateTime.Now;
         }
 
+        // Au chargement de la fenêtre
         private void Game_Loaded(object sender, RoutedEventArgs e)
         {
-            double startX = (canvasJeu.ActualWidth - imgConeChoisi.Width) / 2;
-            double startY = canvasJeu.ActualHeight - imgConeChoisi.Height;
-            Canvas.SetLeft(imgConeChoisi, startX);
-            Canvas.SetTop(imgConeChoisi, startY);
+            // On place le cône au milieu, en bas
+            double x = (canvasJeu.ActualWidth - imgConeChoisi.Width) / 2;
+            double y = canvasJeu.ActualHeight - imgConeChoisi.Height - 10;
+
+            Canvas.SetLeft(imgConeChoisi, x);
+            Canvas.SetTop(imgConeChoisi, y);
+
+            // On lance le jeu
+            debutPartie = DateTime.Now;
+            prochainSpawn = DateTime.Now;
+            moteurJeu.Start();
+            timerProgression.Start();
+
+            // On donne le focus au Canvas pour capter les touches
             this.Focus();
         }
 
-        private void Game_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            Canvas.SetTop(imgConeChoisi, canvasJeu.ActualHeight - imgConeChoisi.Height);
-        }
-
+        // Gestion des touches (Gauche / Droite)
         private void Game_KeyDown(object sender, KeyEventArgs e)
         {
-            double x = Canvas.GetLeft(imgConeChoisi);
+            double xActuel = Canvas.GetLeft(imgConeChoisi);
 
-            if (e.Key == Key.Left) x = Math.Max(0, x - coneSpeed);
-            if (e.Key == Key.Right) x = Math.Min(canvasJeu.ActualWidth - imgConeChoisi.Width, x + coneSpeed);
-
-            Canvas.SetLeft(imgConeChoisi, x);
-
-            foreach (var boule in boulesEmpilees)
+            if (e.Key == Key.Left)
             {
-                double offsetX = (imgConeChoisi.Width - boule.Width) / 2;
-                Canvas.SetLeft(boule, x + offsetX);
+                // Math.Max évite de sortir à gauche (valeur négative)
+                xActuel = Math.Max(0, xActuel - vitesseCone);
+            }
+
+            if (e.Key == Key.Right)
+            {
+                // Math.Min évite de sortir à droite
+                xActuel = Math.Min(canvasJeu.ActualWidth - imgConeChoisi.Width, xActuel + vitesseCone);
+            }
+
+            // On applique la nouvelle position au cône
+            Canvas.SetLeft(imgConeChoisi, xActuel);
+
+            foreach (Image boule in boulesEmpilees)
+            {
+                // On centre la boule par rapport au cône
+                double decalage = (imgConeChoisi.Width - boule.Width) / 2;
+                Canvas.SetLeft(boule, xActuel + decalage);
             }
         }
 
-        private void TimerProgression_Tick(object sender, EventArgs e)
+        // Gestion du Temps (1 fois par seconde)
+        private void Chronometre_Tick(object sender, EventArgs e)
         {
             TimeSpan tempsEcoule = DateTime.Now - debutPartie;
             txtTemps.Text = $"Temps: {tempsEcoule.Minutes:D2}:{tempsEcoule.Seconds:D2}";
 
-            bouleFallSpeed += 0.05;
-            zoneSpawnOffset = Math.Min(350, zoneSpawnOffset + 10);
-            spawnDelay = Math.Max(500, spawnDelay - 5);
-            coneSpeed = 10 + (zoneSpawnOffset - 150) / 20.0;
+            // Petite augmentation de difficulté
+            vitesseChute += 0.1;
+            if (delaiSpawn > 500) delaiSpawn -= 20;
         }
 
-        private void MoteurJeu_Tick(object sender, EventArgs e)
+        // BOUCLE PRINCIPALE DU JEU (60 fois par seconde)
+        private void BoucleDeJeu_Tick(object sender, EventArgs e)
         {
+            // A. Création des boules
             if (DateTime.Now >= prochainSpawn)
             {
-                SpawnBoule();
-                prochainSpawn = DateTime.Now.AddMilliseconds(spawnDelay);
+                CreerBoule();
+                prochainSpawn = DateTime.Now.AddMilliseconds(delaiSpawn);
             }
 
+            // B. Gestion des boules qui tombent
+            // On parcourt à l'envers (i--) pour pouvoir supprimer des éléments sans bug
             for (int i = boulesTombantes.Count - 1; i >= 0; i--)
             {
                 Image boule = boulesTombantes[i];
-                double y = Canvas.GetTop(boule) + bouleFallSpeed;
-                Canvas.SetTop(boule, y);
 
-                if (y >= canvasJeu.ActualHeight - boule.Height)
+                // On fait descendre la boule
+                double newY = Canvas.GetTop(boule) + vitesseChute;
+                Canvas.SetTop(boule, newY);
+
+                // Cas 1 : La boule touche le sol (Raté)
+                if (newY >= canvasJeu.ActualHeight - boule.Height)
                 {
-                    boulesAuSol++;
-                    canvasJeu.Children.Remove(boule);
-                    boulesTombantes.RemoveAt(i);
+                    viesPerdues++;
+                    canvasJeu.Children.Remove(boule); // Supprime du visuel
+                    boulesTombantes.RemoveAt(i);      // Supprime de la liste logique
 
-                    if (boulesAuSol >= 3)
-                        FinDePartie();
-
+                    if (viesPerdues >= 3) FinDePartie();
                     continue;
                 }
 
-                if (VerifierCollision(boule))
+                // Cas 2 : Collision (Gagné)
+                if (DetecterCollision(boule))
                 {
-                    boulesTombantes.RemoveAt(i);
-                    EmpilerSurPile(boule);
-                    AjouterScore(10);
-                    CheckHauteurMax();
+                    boulesTombantes.RemoveAt(i); // On l'enlève de la liste "qui tombe"
+                    EmpilerLaBoule(boule);       // On la met dans la liste "fixe"
+
+                    score += 10;
+                    txtScore.Text = $"Score: {score}";
+
+                    VerifierHauteurPile();
                 }
             }
         }
 
-        private void SpawnBoule()
+        private void CreerBoule()
         {
-            Image boule = new Image
-            {
-                Width = 60,
-                Height = 60,
-                Source = new BitmapImage(new Uri($"Images/image{random.Next(1, 6)}.png", UriKind.Relative))
-            };
+            // Création de l'image
+            Image boule = new Image();
+            boule.Width = 60;
+            boule.Height = 60;
 
-            double coneX = Canvas.GetLeft(imgConeChoisi);
-            double zoneMin = Math.Max(0, coneX - zoneSpawnOffset);
-            double zoneMax = Math.Min(canvasJeu.ActualWidth - boule.Width, coneX + zoneSpawnOffset);
-            double x = random.Next((int)zoneMin, (int)zoneMax);
+            // Choix aléatoire de l'image (1 à 5)
+            // Assure-toi que tes images sont bien dans un dossier "Images" à la racine du projet
+            int numeroImage = generateurAleatoire.Next(1, 6);
+            string cheminImage = $"pack://application:,,,/Images/image{numeroImage}.png";
+
+            try
+            {
+                boule.Source = new BitmapImage(new Uri(cheminImage));
+            }
+            catch
+            {
+                // Si l'image n'existe pas, ça évite le crash (optionnel)
+            }
+
+            // Position horizontale aléatoire
+            double x = generateurAleatoire.Next(0, (int)(canvasJeu.ActualWidth - boule.Width));
 
             Canvas.SetLeft(boule, x);
-            Canvas.SetTop(boule, -80);
+            Canvas.SetTop(boule, -60); // Commence juste au-dessus de l'écran
 
             canvasJeu.Children.Add(boule);
             boulesTombantes.Add(boule);
         }
 
-        private bool VerifierCollision(Image boule)
+        private bool DetecterCollision(Image boule)
         {
-            if (CollisionBas(boule, imgConeChoisi) && boulesEmpilees.Count == 0)
-                return true;
+            // On cherche avec quoi la boule peut entrer en collision
+            // Soit le cône (si vide), soit la dernière boule posée
+            Image cible;
+            if (boulesEmpilees.Count == 0)
+                cible = imgConeChoisi;
+            else
+                cible = boulesEmpilees[boulesEmpilees.Count - 1];
 
-            foreach (var b in boulesEmpilees)
-                if (CollisionBas(boule, b)) return true;
+            // Coordonnées
+            double bouleY = Canvas.GetTop(boule) + boule.Height;
+            double cibleY = Canvas.GetTop(cible);
 
-            return false;
+            double bouleX = Canvas.GetLeft(boule);
+            double cibleX = Canvas.GetLeft(cible);
+
+            // Test de collision simple (rectangles)
+            bool toucheHauteur = (bouleY >= cibleY && bouleY <= cibleY + 15); // Marge de tolérance
+            bool toucheLargeur = (bouleX + boule.Width > cibleX && bouleX < cibleX + cible.Width);
+
+            return toucheHauteur && toucheLargeur;
         }
 
-        private bool CollisionBas(Image bouleQuiTombe, Image obstacle)
+        private void EmpilerLaBoule(Image boule)
         {
-            double ay = Canvas.GetTop(bouleQuiTombe) + bouleQuiTombe.Height;
-            double by = Canvas.GetTop(obstacle);
-            bool verticalOk = (ay >= by && ay <= by + 10);
+            // On centre la boule sur le cône
+            double centreX = Canvas.GetLeft(imgConeChoisi) + (imgConeChoisi.Width - boule.Width) / 2;
 
-            double ax = Canvas.GetLeft(bouleQuiTombe);
-            double bx = Canvas.GetLeft(obstacle);
-            bool horizontalOk = (ax + bouleQuiTombe.Width > bx && ax < bx + obstacle.Width);
+            // On calcule la position Y (sur le cône ou sur la pile)
+            double cibleY;
+            if (boulesEmpilees.Count == 0)
+                cibleY = Canvas.GetTop(imgConeChoisi) - boule.Height + 15; // +15 pour l'effet "emboîté"
+            else
+                cibleY = Canvas.GetTop(boulesEmpilees[boulesEmpilees.Count - 1]) - boule.Height + 15;
 
-            return verticalOk && horizontalOk;
-        }
+            Canvas.SetLeft(boule, centreX);
+            Canvas.SetTop(boule, cibleY);
 
-        private void EmpilerSurPile(Image boule)
-        {
-            int pixelsChevauchement = 15;
-            double decalageX = (imgConeChoisi.Width - boule.Width) / 2;
-            double posX = Canvas.GetLeft(imgConeChoisi) + decalageX;
-
-            double referenceY = boulesEmpilees.Count == 0 ? Canvas.GetTop(imgConeChoisi) : Canvas.GetTop(boulesEmpilees[^1]);
-            double posY = referenceY - boule.Height + pixelsChevauchement;
-
-            Canvas.SetLeft(boule, posX);
-            Canvas.SetTop(boule, posY);
             boulesEmpilees.Add(boule);
         }
 
-        private void CheckHauteurMax()
+        private void VerifierHauteurPile()
         {
-            if (boulesEmpilees.Count == 0) return;
-
-            if (Canvas.GetTop(boulesEmpilees[^1]) <= hauteurMax)
+            // Si on a des boules empilées
+            if (boulesEmpilees.Count > 0)
             {
-                foreach (var boule in boulesEmpilees)
-                    canvasJeu.Children.Remove(boule);
+                // On regarde la boule tout en haut
+                Image bouleDuHaut = boulesEmpilees[boulesEmpilees.Count - 1];
 
-                boulesEmpilees.Clear();
-                AjouterScore(100);
+                // Si elle atteint le haut de l'écran
+                if (Canvas.GetTop(bouleDuHaut) <= hauteurMax)
+                {
+                    // Bonus !
+                    score += 100;
+                    txtScore.Text = $"Score: {score}";
+
+                    // On vide la pile (visuellement et logiquement)
+                    foreach (Image b in boulesEmpilees)
+                    {
+                        canvasJeu.Children.Remove(b);
+                    }
+                    boulesEmpilees.Clear();
+                }
             }
-        }
-
-        private void AjouterScore(int points)
-        {
-            score += points;
-            txtScore.Text = $"Score: {score}";
         }
 
         private void FinDePartie()
         {
+            // Arrêt des chronos
             moteurJeu.Stop();
             timerProgression.Stop();
 
-            TimeSpan tempsEcoule = DateTime.Now - debutPartie;
-            string tempsTexte = $"{tempsEcoule.Minutes:D2}:{tempsEcoule.Seconds:D2}";
+            // Préparation des infos pour la fin
+            TimeSpan fin = DateTime.Now - debutPartie;
+            string tempsStr = $"{fin.Minutes:D2}:{fin.Seconds:D2}";
 
-            GameOver fenetreGameOver = new GameOver(score, tempsTexte);
-            fenetreGameOver.Show();
+            // Ouverture de la fenêtre GameOver
+            GameOver fenetreFin = new GameOver(score, tempsStr);
+            fenetreFin.Show();
 
             this.Close();
         }

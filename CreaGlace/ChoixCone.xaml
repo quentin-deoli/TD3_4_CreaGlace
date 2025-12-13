@@ -7,21 +7,10 @@
         ResizeMode="NoResize">
 
     <Grid>
+        <Image Source="ChoixCone.png" Stretch="Fill"/>
 
-        <!-- IMAGE DE FOND -->
-        <Image Source="ChoixCone.png"
-               Stretch="Fill"
-               Panel.ZIndex="0">
-            <Image.OpacityMask>
-                <ImageBrush ImageSource="/ChoixCone.png"/>
-            </Image.OpacityMask>
-        </Image>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
 
-        <StackPanel VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Panel.ZIndex="1">
-
-            <!-- TITRE -->
             <TextBlock Text="Choisis ton cône"
                        FontSize="42"
                        FontWeight="Bold"
@@ -29,58 +18,44 @@
                        HorizontalAlignment="Center"
                        Margin="0 0 0 20"/>
 
-            <!-- 4 CONES -->
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center"
                         Margin="0 20 0 20">
 
-                <!-- CONE 1 -->
                 <Button x:Name="BtnCone1" Width="140" Height="200" Margin="10"
                         Background="Transparent" BorderBrush="Transparent"
                         Click="Cone_Click" Tag="1">
-                    <Image x:Name="ImgCone1" Source="Images/cone1.png" Stretch="Uniform">
-                        <Image.RenderTransform>
-                            <ScaleTransform ScaleX="1" ScaleY="1"/>
-                        </Image.RenderTransform>
-                    </Image>
+                    <Border x:Name="Border1" BorderThickness="0" CornerRadius="10">
+                        <Image Source="Images/cone1.png" Stretch="Uniform"/>
+                    </Border>
                 </Button>
 
-                <!-- CONE 2 -->
                 <Button x:Name="BtnCone2" Width="140" Height="200" Margin="10"
                         Background="Transparent" BorderBrush="Transparent"
                         Click="Cone_Click" Tag="2">
-                    <Image x:Name="ImgCone2" Source="Images/cone2.png" Stretch="Uniform">
-                        <Image.RenderTransform>
-                            <ScaleTransform ScaleX="1" ScaleY="1"/>
-                        </Image.RenderTransform>
-                    </Image>
+                    <Border x:Name="Border2" BorderThickness="0" CornerRadius="10">
+                        <Image Source="Images/cone2.png" Stretch="Uniform"/>
+                    </Border>
                 </Button>
 
-                <!-- CONE 3 -->
                 <Button x:Name="BtnCone3" Width="140" Height="200" Margin="10"
                         Background="Transparent" BorderBrush="Transparent"
                         Click="Cone_Click" Tag="3">
-                    <Image x:Name="ImgCone3" Source="Images/cone3.png" Stretch="Uniform">
-                        <Image.RenderTransform>
-                            <ScaleTransform ScaleX="1" ScaleY="1"/>
-                        </Image.RenderTransform>
-                    </Image>
+                    <Border x:Name="Border3" BorderThickness="0" CornerRadius="10">
+                        <Image Source="Images/cone3.png" Stretch="Uniform"/>
+                    </Border>
                 </Button>
 
-                <!-- CONE 4 -->
                 <Button x:Name="BtnCone4" Width="140" Height="200" Margin="10"
                         Background="Transparent" BorderBrush="Transparent"
                         Click="Cone_Click" Tag="4">
-                    <Image x:Name="ImgCone4" Source="Images/cone4.png" Stretch="Uniform">
-                        <Image.RenderTransform>
-                            <ScaleTransform ScaleX="1" ScaleY="1"/>
-                        </Image.RenderTransform>
-                    </Image>
+                    <Border x:Name="Border4" BorderThickness="0" CornerRadius="10">
+                        <Image Source="Images/cone4.png" Stretch="Uniform"/>
+                    </Border>
                 </Button>
 
             </StackPanel>
 
-            <!-- BOUTON VALIDER -->
             <Button x:Name="BtnValider"
                     Content="Valider"
                     FontSize="24"
@@ -91,6 +66,5 @@
                     Click="Valider_Click"/>
 
         </StackPanel>
-
     </Grid>
 </Window>
