@@ -13,6 +13,7 @@
     <None Remove="fondmenu.png" />
     <None Remove="gameover.png" />
     <None Remove="glace.jpg" />
+    <None Remove="Images\bombe.jpg" />
     <None Remove="Images\cone1.png" />
     <None Remove="Images\cone2.png" />
     <None Remove="Images\cone3.png" />
@@ -38,6 +39,7 @@
     <Resource Include="fondmenu.png" />
     <Resource Include="gameover.png" />
     <Resource Include="glace.jpg" />
+    <Resource Include="Images\bombe.jpg" />
     <Resource Include="Images\cone1.png" />
     <Resource Include="Images\cone2.png" />
     <Resource Include="Images\cone3.png" />
