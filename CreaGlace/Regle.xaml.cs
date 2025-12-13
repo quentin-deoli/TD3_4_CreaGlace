@@ -1,47 +1,60 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using System.Windows.Media;
 
 namespace CreaGlace
 {
     public partial class Regle : Window
     {
         private DispatcherTimer timer;
-        private ImageSource coneImage; // Variable globale pour retenir l'image reçue
+        private int coneChoisi;
 
-        // Constructeur qui accepte l'image venant de ChoixCone
-        public Regle(ImageSource selectedCone)
+        // Constructeur : reçoit le numéro du cône
+        public Regle(int coneChoisi)
         {
             InitializeComponent();
 
-            //On stocke l'image reçue
-            coneImage = selectedCone;
+            this.coneChoisi = coneChoisi;
 
-            //On configure un minuteur 
+            // Affichage du cône choisi
+            AfficherCone();
+
+            // Initialisation du minuteur (3 secondes)
             timer = new DispatcherTimer();
-
-            // Le minuteur "tiquera" au bout de 3 secondes
             timer.Interval = TimeSpan.FromSeconds(3);
-
-            // On lui dit quelle méthode lancer quand le temps est écoulé
             timer.Tick += FinDuCompteur_Tick;
-
-            //On démarre le chrono
             timer.Start();
         }
 
-        // Cette méthode se lance automatiquement après 3 secondes
+        // Affiche l'image correspondant au cône choisi
+        private void AfficherCone()
+        {
+            string cheminImage = "";
+
+            if (coneChoisi == 1)
+                cheminImage = "Images/cone1.png";
+            else if (coneChoisi == 2)
+                cheminImage = "Images/cone2.png";
+            else if (coneChoisi == 3)
+                cheminImage = "Images/cone3.png";
+            else if (coneChoisi == 4)
+                cheminImage = "Images/cone4.png";
+
+            imgCone.Source = new BitmapImage(
+                new Uri(cheminImage, UriKind.Relative)
+            );
+        }
+
+        // Appelée automatiquement après 3 secondes
         private void FinDuCompteur_Tick(object sender, EventArgs e)
         {
-            // On arrête le timer pour pas qu'il recommence
             timer.Stop();
 
-            // On lance le JEU en lui passant le cône
-            Game partie = new Game(coneImage);
+            // Lancement du jeu
+            Game partie = new Game(coneChoisi);
             partie.Show();
 
-            // On ferme la fenêtre de règles car on n'y reviendra pas
+            // Fermeture de la fenêtre des règles
             this.Close();
         }
     }

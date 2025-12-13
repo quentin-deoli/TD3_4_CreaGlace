@@ -28,6 +28,7 @@
     <None Remove="imgFondJeu.png" />
     <None Remove="regle.jpg" />
     <None Remove="regles.png" />
+    <None Remove="regless.png" />
     <None Remove="Sons\cornetsfx.wav" />
     <None Remove="Sons\glacesfx.wav" />
     <None Remove="Sons\winter.mp3" />
@@ -54,6 +55,7 @@
     <Resource Include="imgFondJeu.png" />
     <Resource Include="regle.jpg" />
     <Resource Include="regles.png" />
+    <Resource Include="regless.png" />
     <Resource Include="Sons\cornetsfx.wav" />
     <Resource Include="Sons\glacesfx.wav" />
     <Resource Include="Sons\winter.mp3" />

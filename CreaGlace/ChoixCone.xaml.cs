@@ -1,14 +1,13 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 
 namespace CreaGlace
 {
     public partial class ChoixCone : Window
     {
-        // On stocke l'image choisie pour la passer à la fenêtre suivante
-        private ImageSource imageChoisie = null;
+        // Numéro du cône choisi (0 = aucun)
+        private int coneChoisi = 0;
 
         public ChoixCone()
         {
@@ -17,22 +16,20 @@ namespace CreaGlace
 
         private void Cone_Click(object sender, RoutedEventArgs e)
         {
-            //On récupère le bouton cliqué
+            // Récupération du bouton cliqué
             Button boutonClique = (Button)sender;
 
-            // On récupère la bordure et l'image à l'intérieur du bouton
-            Border bordureActuelle = (Border)boutonClique.Content;
-            Image imageDansLeBouton = (Image)bordureActuelle.Child;
+            // Récupération du numéro du cône via le Tag
+            coneChoisi = int.Parse(boutonClique.Tag.ToString());
 
-            //On réinitialise toutes les bordures (on efface la sélection précédente)
+            // Réinitialisation des bordures
             ReinitialiserBordures();
 
-            //On met en valeur le cône cliqué (Bordure bleue épaisse)
-            bordureActuelle.BorderThickness = new Thickness(4);
-            bordureActuelle.BorderBrush = Brushes.DeepSkyBlue;
+            // Mise en évidence du bouton sélectionné
+            Border bordure = (Border)boutonClique.Content;
+            bordure.BorderThickness = new Thickness(4);
+            bordure.BorderBrush = Brushes.DeepSkyBlue;
 
-            //On sauvegarde l'image source
-            imageChoisie = imageDansLeBouton.Source;
         }
 
         // Petite méthode pour remettre tout à zéro (facile à comprendre)
@@ -47,7 +44,7 @@ namespace CreaGlace
         private void Valider_Click(object sender, RoutedEventArgs e)
         {
             // Vérification simple (vu dans le cours page 7 sur les MessageBox)
-            if (imageChoisie == null)
+            if (coneChoisi == 0)
             {
                 MessageBox.Show("Choisis un cône avant de continuer !");
                 return;
@@ -55,8 +52,8 @@ namespace CreaGlace
 
             // On passe l'information à la fenêtre suivante via le constructeur
             // C'est de la Programmation Orientée Objet de base (Sequence 3)
-            Regle fenetreRegle = new Regle(imageChoisie);
-
+            // Ouverture de la fenêtre suivante en passant le numéro du cône
+            Regle fenetreRegle = new Regle(coneChoisi);
             fenetreRegle.Show();
 
             // On cache cette fenêtre
