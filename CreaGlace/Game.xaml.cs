@@ -11,14 +11,13 @@ namespace CreaGlace
 {
     public partial class Game : Window
     {
-        // ====== OUTILS ======
+        // ===== OUTILS =====
         private Random alea = new Random();
-        private MediaPlayer lecteurSon = new MediaPlayer();
 
-        // ====== TIMER ======
+        // ===== TIMER =====
         private DispatcherTimer timerJeu;
 
-        // ====== JEU ======
+        // ===== JEU =====
         private Image bouleQuiTombe = null;
         private List<Image> pile = new List<Image>();
 
@@ -28,7 +27,7 @@ namespace CreaGlace
 
         private bool estEnPause = false;
 
-        // ====== TEMPS ======
+        // ===== TEMPS =====
         private int tempsSecondes = 0;
         private int compteurMs = 0;
         private int compteurSpawnMs = 0;
@@ -36,10 +35,10 @@ namespace CreaGlace
         private int delaiSpawnMs = 1500;
         private double vitesseChute = 3;
 
-        // ====== DEPLACEMENT ======
+        // ===== DEPLACEMENT =====
         private double vitesseCone = 15;
 
-        // ====== CONE ======
+        // ===== CONE =====
         private int coneChoisi;
 
         // ================= CONSTRUCTEUR =================
@@ -50,25 +49,31 @@ namespace CreaGlace
             this.coneChoisi = coneChoisi;
             ChargerCone();
 
-            // ====== CHARGEMENT DU SON (BONNE MÉTHODE) ======
-            string cheminSon = System.IO.Path.Combine(
-                AppDomain.CurrentDomain.BaseDirectory,
-                "Sons",
-                "pop.mp3"
-            );
-            lecteurSon.Open(new Uri(cheminSon, UriKind.Absolute));
-
-            // ====== TIMER ======
             timerJeu = new DispatcherTimer();
             timerJeu.Interval = TimeSpan.FromMilliseconds(20);
             timerJeu.Tick += TimerJeu_Tick;
 
-            Loaded += Game_Loaded;
+            Loaded += Game_charger;
             KeyDown += Game_KeyDown;
         }
 
+        // ================= SON (UNE SEULE METHODE) =================
+        private void JouerSon(string nomFichier)
+        {
+            string chemin = System.IO.Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "Sons",
+                nomFichier
+            );
+
+            MediaPlayer son = new MediaPlayer();
+            son.Open(new Uri(chemin, UriKind.Absolute));
+            son.Volume = App.VolumeSFX;
+            son.Play();
+        }
+
         // ================= CHARGEMENT =================
-        private void Game_Loaded(object sender, RoutedEventArgs e)
+        private void Game_charger(object sender, RoutedEventArgs e)
         {
             PlacerConeAuCentre();
 
@@ -83,7 +88,6 @@ namespace CreaGlace
 
             timerJeu.Start();
             Focus();
-
         }
 
         // ================= CLAVIER =================
@@ -93,6 +97,8 @@ namespace CreaGlace
             {
                 estEnPause = !estEnPause;
                 txtPause.Visibility = estEnPause ? Visibility.Visible : Visibility.Collapsed;
+
+                JouerSon("pause.mp3");
                 return;
             }
 
@@ -144,21 +150,31 @@ namespace CreaGlace
             // ---- CHUTE ----
             if (bouleQuiTombe != null)
             {
-                RotateTransform rotation = (RotateTransform)bouleQuiTombe.RenderTransform;
-                rotation.Angle += 5;
+                RotateTransform rot = (RotateTransform)bouleQuiTombe.RenderTransform;
+                rot.Angle += 5;
 
                 double y = Canvas.GetTop(bouleQuiTombe) + vitesseChute;
                 Canvas.SetTop(bouleQuiTombe, y);
 
+                // RATÉ
                 if (y >= canvasJeu.ActualHeight - bouleQuiTombe.Height)
                 {
                     canvasJeu.Children.Remove(bouleQuiTombe);
                     bouleQuiTombe = null;
 
                     viesPerdues++;
+
                     if (viesPerdues >= NB_VIES_MAX)
+                    {
+                        JouerSon("gameover.mp3");
                         FinDePartie();
+                    }
+                    else
+                    {
+                        JouerSon("fail.mp3");
+                    }
                 }
+                // COLLISION
                 else if (DetecterCollision(bouleQuiTombe))
                 {
                     EmpilerBoule(bouleQuiTombe);
@@ -167,6 +183,7 @@ namespace CreaGlace
                     score += 10;
                     txtScore.Text = "Score: " + score;
 
+                    JouerSon("pop.mp3");
                     VerifierHauteurPile();
                 }
             }
@@ -209,17 +226,15 @@ namespace CreaGlace
             double obsGauche = Canvas.GetLeft(obstacle);
             double obsDroite = obsGauche + obstacle.Width;
 
-            bool toucheHauteur = bouleBas >= obsHaut && bouleBas <= obsHaut + 15;
-            bool toucheLargeur = bouleDroite > obsGauche && bouleGauche < obsDroite;
-
-            return toucheHauteur && toucheLargeur;
+            return (bouleBas >= obsHaut && bouleBas <= obsHaut + 15)
+                && (bouleDroite > obsGauche && bouleGauche < obsDroite);
         }
 
         // ================= EMPILER =================
         private void EmpilerBoule(Image boule)
         {
             double centreX = Canvas.GetLeft(imgConeChoisi)
-                            + (imgConeChoisi.Width - boule.Width) / 2;
+                + (imgConeChoisi.Width - boule.Width) / 2;
 
             double cibleY = (pile.Count == 0)
                 ? Canvas.GetTop(imgConeChoisi) - boule.Height + 15
@@ -229,12 +244,6 @@ namespace CreaGlace
             Canvas.SetTop(boule, cibleY);
 
             pile.Add(boule);
-
-            // ====== JOUER LE SON ======
-            lecteurSon.Stop();
-            lecteurSon.Position = TimeSpan.Zero;
-            lecteurSon.Volume = App.VolumeSFX;
-            lecteurSon.Play();
         }
 
         // ================= BONUS =================
@@ -249,6 +258,8 @@ namespace CreaGlace
             {
                 score += 100;
                 txtScore.Text = "Score: " + score;
+
+                JouerSon("bonus.mp3");
 
                 foreach (Image b in pile)
                     canvasJeu.Children.Remove(b);

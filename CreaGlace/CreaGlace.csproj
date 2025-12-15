@@ -30,7 +30,10 @@
     <None Remove="regles.png" />
     <None Remove="regless.png" />
     <None Remove="Sons\cornetsfx.wav" />
+    <None Remove="Sons\fail.mp3" />
+    <None Remove="Sons\gameover.mp3" />
     <None Remove="Sons\glacesfx.wav" />
+    <None Remove="Sons\pause.mp3" />
     <None Remove="Sons\winter.mp3" />
     <None Remove="touche.jpg" />
   </ItemGroup>
@@ -56,7 +59,19 @@
     <Resource Include="regle.jpg" />
     <Resource Include="regles.png" />
     <Resource Include="regless.png" />
+    <Content Include="Sons\fail.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sons\gameover.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sons\pause.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Sons\pop.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sons\bonus.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="touche.jpg" />
