@@ -56,9 +56,9 @@
     <Resource Include="regle.jpg" />
     <Resource Include="regles.png" />
     <Resource Include="regless.png" />
-    <Resource Include="Sons\pop.mp3">
+    <Content Include="Sons\pop.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    </Content>
     <Resource Include="touche.jpg" />
   </ItemGroup>
 

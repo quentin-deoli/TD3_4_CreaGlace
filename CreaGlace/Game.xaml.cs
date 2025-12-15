@@ -13,14 +13,14 @@ namespace CreaGlace
     {
         // ====== OUTILS ======
         private Random alea = new Random();
-
         private MediaPlayer lecteurSon = new MediaPlayer();
 
-        // ====== JEU ======
+        // ====== TIMER ======
         private DispatcherTimer timerJeu;
 
-        private Image bouleQuiTombe = null;              // 1 seule boule qui tombe (plus simple)
-        private List<Image> pile = new List<Image>();    // boules empilées
+        // ====== JEU ======
+        private Image bouleQuiTombe = null;
+        private List<Image> pile = new List<Image>();
 
         private int score = 0;
         private int viesPerdues = 0;
@@ -28,13 +28,13 @@ namespace CreaGlace
 
         private bool estEnPause = false;
 
-        // ====== TEMPS + DIFFICULTÉ ======
+        // ====== TEMPS ======
         private int tempsSecondes = 0;
-        private int compteurMs = 0;          // sert à faire "1 seconde" avec le timer
-        private int compteurSpawnMs = 0;     // sert à savoir quand créer une nouvelle boule
+        private int compteurMs = 0;
+        private int compteurSpawnMs = 0;
 
-        private int delaiSpawnMs = 1500;     // temps entre 2 boules
-        private double vitesseChute = 3;     // vitesse de chute
+        private int delaiSpawnMs = 1500;
+        private double vitesseChute = 3;
 
         // ====== DEPLACEMENT ======
         private double vitesseCone = 15;
@@ -42,6 +42,7 @@ namespace CreaGlace
         // ====== CONE ======
         private int coneChoisi;
 
+        // ================= CONSTRUCTEUR =================
         public Game(int coneChoisi)
         {
             InitializeComponent();
@@ -49,20 +50,24 @@ namespace CreaGlace
             this.coneChoisi = coneChoisi;
             ChargerCone();
 
-            // --- SON : CHARGEMENT ---
-            // On lui dit où chercher le fichier. UriKind.Relative est important !
-            // Assure-toi que le nom du fichier est EXACTEMENT le même (majuscules/minuscules)
-            lecteurSon.Open(new Uri("Sons/pop.mp3", UriKind.Relative));
+            // ====== CHARGEMENT DU SON (BONNE MÉTHODE) ======
+            string cheminSon = System.IO.Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "Sons",
+                "pop.mp3"
+            );
+            lecteurSon.Open(new Uri(cheminSon, UriKind.Absolute));
 
-            // Un seul timer pour TOUT (moteur du jeu)
+            // ====== TIMER ======
             timerJeu = new DispatcherTimer();
-            timerJeu.Interval = TimeSpan.FromMilliseconds(20); // 50 fps environ
+            timerJeu.Interval = TimeSpan.FromMilliseconds(20);
             timerJeu.Tick += TimerJeu_Tick;
 
             Loaded += Game_Loaded;
             KeyDown += Game_KeyDown;
         }
 
+        // ================= CHARGEMENT =================
         private void Game_Loaded(object sender, RoutedEventArgs e)
         {
             PlacerConeAuCentre();
@@ -78,12 +83,12 @@ namespace CreaGlace
 
             timerJeu.Start();
             Focus();
+
         }
 
-        // ====== CLAVIER ======
+        // ================= CLAVIER =================
         private void Game_KeyDown(object sender, KeyEventArgs e)
         {
-            // Pause avec P
             if (e.Key == Key.P)
             {
                 estEnPause = !estEnPause;
@@ -103,7 +108,6 @@ namespace CreaGlace
 
             Canvas.SetLeft(imgConeChoisi, x);
 
-            // La pile suit le cône (on recentre juste en X)
             foreach (Image b in pile)
             {
                 double decalage = (imgConeChoisi.Width - b.Width) / 2;
@@ -111,12 +115,12 @@ namespace CreaGlace
             }
         }
 
-        // ====== BOUCLE DE JEU ======
+        // ================= BOUCLE DE JEU =================
         private void TimerJeu_Tick(object sender, EventArgs e)
         {
             if (estEnPause) return;
 
-            // 1) Gestion du temps (on cumule les ms)
+            // ---- TEMPS ----
             compteurMs += 20;
             if (compteurMs >= 1000)
             {
@@ -124,13 +128,12 @@ namespace CreaGlace
                 tempsSecondes++;
                 AfficherTemps();
 
-                // difficulté progressive simple
                 vitesseChute += 0.1;
                 if (delaiSpawnMs > 500)
                     delaiSpawnMs -= 15;
             }
 
-            // 2) Gestion du spawn (créer une boule si besoin)
+            // ---- SPAWN ----
             compteurSpawnMs += 20;
             if (bouleQuiTombe == null && compteurSpawnMs >= delaiSpawnMs)
             {
@@ -138,23 +141,15 @@ namespace CreaGlace
                 bouleQuiTombe = CreerBoule();
             }
 
-            // 3) Faire tomber la boule
+            // ---- CHUTE ----
             if (bouleQuiTombe != null)
             {
-                // --- ROTATION : ACTION ---
-                // On récupère la transformation qu'on a créée plus haut
-                // On utilise (RotateTransform) pour dire : "Traite ça comme une Rotation"
-                RotateTransform laRotation = (RotateTransform)bouleQuiTombe.RenderTransform;
+                RotateTransform rotation = (RotateTransform)bouleQuiTombe.RenderTransform;
+                rotation.Angle += 5;
 
-                // On augmente l'angle de 5 degrés à chaque tick du timer
-                laRotation.Angle += 5;
-                // -------------------------
-
-                double y = Canvas.GetTop(bouleQuiTombe);
-                y += vitesseChute;
+                double y = Canvas.GetTop(bouleQuiTombe) + vitesseChute;
                 Canvas.SetTop(bouleQuiTombe, y);
 
-                // raté (touché le bas)
                 if (y >= canvasJeu.ActualHeight - bouleQuiTombe.Height)
                 {
                     canvasJeu.Children.Remove(bouleQuiTombe);
@@ -162,41 +157,30 @@ namespace CreaGlace
 
                     viesPerdues++;
                     if (viesPerdues >= NB_VIES_MAX)
-                    {
                         FinDePartie();
-                        return;
-                    }
                 }
-                else
+                else if (DetecterCollision(bouleQuiTombe))
                 {
-                    // collision -> empiler
-                    if (DetecterCollisionAvecObstacle(bouleQuiTombe))
-                    {
-                        EmpilerBoule(bouleQuiTombe);
-                        bouleQuiTombe = null;
+                    EmpilerBoule(bouleQuiTombe);
+                    bouleQuiTombe = null;
 
-                        score += 10;
-                        txtScore.Text = "Score: " + score;
+                    score += 10;
+                    txtScore.Text = "Score: " + score;
 
-                        VerifierHauteurPile();
-                    }
+                    VerifierHauteurPile();
                 }
             }
         }
 
-        // ====== CREER UNE BOULE ======
+        // ================= CREER BOULE =================
         private Image CreerBoule()
         {
             Image boule = new Image();
             boule.Width = 60;
             boule.Height = 60;
 
-            // --- ROTATION : PRÉPARATION ---
-            // On définit le point de pivot au centre de l'image (0.5, 0.5)
             boule.RenderTransformOrigin = new Point(0.5, 0.5);
-            // On lui attribue une transformation de rotation qui commence à 0 degré
             boule.RenderTransform = new RotateTransform(0);
-            // ------------------------------
 
             int numero = alea.Next(1, 6);
             string chemin = "Images/image" + numero + ".png";
@@ -212,8 +196,8 @@ namespace CreaGlace
             return boule;
         }
 
-        // ====== COLLISION SIMPLE ======
-        private bool DetecterCollisionAvecObstacle(Image boule)
+        // ================= COLLISION =================
+        private bool DetecterCollision(Image boule)
         {
             Image obstacle = (pile.Count == 0) ? imgConeChoisi : pile[pile.Count - 1];
 
@@ -225,54 +209,47 @@ namespace CreaGlace
             double obsGauche = Canvas.GetLeft(obstacle);
             double obsDroite = obsGauche + obstacle.Width;
 
-            bool toucheHauteur = (bouleBas >= obsHaut && bouleBas <= obsHaut + 15);
-            bool toucheLargeur = (bouleDroite > obsGauche && bouleGauche < obsDroite);
+            bool toucheHauteur = bouleBas >= obsHaut && bouleBas <= obsHaut + 15;
+            bool toucheLargeur = bouleDroite > obsGauche && bouleGauche < obsDroite;
 
             return toucheHauteur && toucheLargeur;
         }
 
-        // ====== EMPILER ======
+        // ================= EMPILER =================
         private void EmpilerBoule(Image boule)
         {
-            double coneX = Canvas.GetLeft(imgConeChoisi);
-            double centreX = coneX + (imgConeChoisi.Width - boule.Width) / 2;
+            double centreX = Canvas.GetLeft(imgConeChoisi)
+                            + (imgConeChoisi.Width - boule.Width) / 2;
 
-            double cibleY;
-            if (pile.Count == 0)
-                cibleY = Canvas.GetTop(imgConeChoisi) - boule.Height + 15;
-            else
-                cibleY = Canvas.GetTop(pile[pile.Count - 1]) - boule.Height + 15;
+            double cibleY = (pile.Count == 0)
+                ? Canvas.GetTop(imgConeChoisi) - boule.Height + 15
+                : Canvas.GetTop(pile[pile.Count - 1]) - boule.Height + 15;
 
             Canvas.SetLeft(boule, centreX);
             Canvas.SetTop(boule, cibleY);
 
             pile.Add(boule);
-            // --- SON : JOUER ---
-            // 1. On rembobine le son au début (sinon il ne joue qu'une fois)
+
+            // ====== JOUER LE SON ======
+            lecteurSon.Stop();
             lecteurSon.Position = TimeSpan.Zero;
-
-            // 2. On règle le volume selon ce que le joueur a choisi dans les Options
             lecteurSon.Volume = App.VolumeSFX;
-
-            // 3. On lance le son
             lecteurSon.Play();
-            // -------------------
         }
 
-        // ====== BONUS HAUTEUR (tu peux enlever si tu veux encore + simple) ======
+        // ================= BONUS =================
         private const int HAUTEUR_MAX = 50;
 
         private void VerifierHauteurPile()
         {
             if (pile.Count == 0) return;
 
-            Image bouleDuHaut = pile[pile.Count - 1];
-            if (Canvas.GetTop(bouleDuHaut) <= HAUTEUR_MAX)
+            Image bouleHaut = pile[pile.Count - 1];
+            if (Canvas.GetTop(bouleHaut) <= HAUTEUR_MAX)
             {
                 score += 100;
                 txtScore.Text = "Score: " + score;
 
-                // On enlève la pile
                 foreach (Image b in pile)
                     canvasJeu.Children.Remove(b);
 
@@ -280,27 +257,27 @@ namespace CreaGlace
             }
         }
 
-        // ====== FIN ======
+        // ================= FIN =================
         private void FinDePartie()
         {
             timerJeu.Stop();
 
-            int minutes = tempsSecondes / 60;
-            int secondes = tempsSecondes % 60;
-            string tempsStr = minutes.ToString("D2") + ":" + secondes.ToString("D2");
+            int min = tempsSecondes / 60;
+            int sec = tempsSecondes % 60;
+            string temps = min.ToString("D2") + ":" + sec.ToString("D2");
 
-            GameOver go = new GameOver(score, tempsStr);
+            GameOver go = new GameOver(score, temps);
             go.Show();
 
             Close();
         }
 
-        // ====== OUTILS D'AFFICHAGE ======
+        // ================= AFFICHAGE =================
         private void AfficherTemps()
         {
-            int minutes = tempsSecondes / 60;
-            int secondes = tempsSecondes % 60;
-            txtTemps.Text = "Temps: " + minutes.ToString("D2") + ":" + secondes.ToString("D2");
+            int min = tempsSecondes / 60;
+            int sec = tempsSecondes % 60;
+            txtTemps.Text = "Temps: " + min.ToString("D2") + ":" + sec.ToString("D2");
         }
 
         private void PlacerConeAuCentre()
@@ -315,12 +292,12 @@ namespace CreaGlace
         private void ChargerCone()
         {
             string chemin = "";
+
             if (coneChoisi == 1) chemin = "Images/cone1.png";
             else if (coneChoisi == 2) chemin = "Images/cone2.png";
             else if (coneChoisi == 3) chemin = "Images/cone3.png";
             else if (coneChoisi == 4) chemin = "Images/cone4.png";
 
-            // Version simple (comme Regle)
             imgConeChoisi.Source = new BitmapImage(new Uri(chemin, UriKind.Relative));
         }
     }
