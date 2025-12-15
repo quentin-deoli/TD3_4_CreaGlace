@@ -4,12 +4,9 @@ namespace CreaGlace
 {
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-
-            // Lancer la musique du menu principal une seule fois
-            AudioManager.InitMusique("Winter.mp3");
-        }
+        // On déclare ces variables en "static" pour pouvoir y accéder depuis 
+        // n'importe quelle autre fenêtre en écrivant simplement App.VolumeMusique
+        public static double VolumeMusique = 0.5; // 0.5 = 50%
+        public static double VolumeSFX = 1.0;     // 1.0 = 100%
     }
 }

@@ -13,6 +13,7 @@ namespace CreaGlace
         public Regle(int coneChoisi)
         {
             InitializeComponent();
+            imgCone.Visibility = Visibility.Hidden;
 
             this.coneChoisi = coneChoisi;
 
@@ -50,11 +51,12 @@ namespace CreaGlace
         {
             timer.Stop();
 
-            // Lancement du jeu
+            // Le cône apparaît juste avant de lancer le jeu
+            imgCone.Visibility = Visibility.Visible;
+
             Game partie = new Game(coneChoisi);
             partie.Show();
 
-            // Fermeture de la fenêtre des règles
             this.Close();
         }
     }

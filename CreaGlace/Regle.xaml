@@ -15,10 +15,12 @@
 
         <!-- Image du cône choisi -->
         <Image x:Name="imgCone"
-               Width="180"
-               Height="180"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Bottom"
-               Margin="0 0 0 30"/>
+       Width="180"
+       Height="180"
+       HorizontalAlignment="Center"
+       VerticalAlignment="Bottom"
+       Margin="0 0 0 30"
+       Visibility="Hidden"/>
+
     </Grid>
 </Window>

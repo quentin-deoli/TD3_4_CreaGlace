@@ -56,9 +56,9 @@
     <Resource Include="regle.jpg" />
     <Resource Include="regles.png" />
     <Resource Include="regless.png" />
-    <Resource Include="Sons\cornetsfx.wav" />
-    <Resource Include="Sons\glacesfx.wav" />
-    <Resource Include="Sons\winter.mp3" />
+    <Resource Include="Sons\pop.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="touche.jpg" />
   </ItemGroup>
 
