@@ -14,35 +14,14 @@
 
         <Canvas x:Name="canvasJeu">
 
-            <TextBlock x:Name="txtScore"
-                       Text="Score: 0"
-                       FontSize="24"
-                       FontWeight="Bold"
-                       Foreground="White"
-                       Canvas.Left="10"
-                       Canvas.Top="10"/>
+            <TextBlock x:Name="txtScore" Text="Score: 0" FontSize="24" FontWeight="Bold" Foreground="White" Canvas.Left="10" Canvas.Top="10"/>
 
-            <TextBlock x:Name="txtTemps"
-                       Text="Temps: 00:00"
-                       FontSize="24"
-                       FontWeight="Bold"
-                       Foreground="White"
-                       Canvas.Right="10"
-                       Canvas.Top="10"/>
+            <TextBlock x:Name="txtTemps" Text="Temps: 00:00" FontSize="24" FontWeight="Bold" Foreground="White" Canvas.Right="10" Canvas.Top="10"/>
 
-            <TextBlock x:Name="txtPause"
-                       Text="PAUSE"
-                       FontSize="60"
-                       FontWeight="Bold"
-                       Foreground="#FFDA637B"
-                       Visibility="Collapsed"
-                       Canvas.Left="300"
-                       Canvas.Top="150"/>
+            <TextBlock x:Name="txtPause" Text="PAUSE" FontSize="60" FontWeight="Bold" Foreground="#FFDA637B" Visibility="Collapsed" Canvas.Left="300" Canvas.Top="150"/>
 
             <!-- Cône choisi -->
-            <Image x:Name="imgConeChoisi"
-                   Width="80"
-                   Height="80"/>
+            <Image x:Name="imgConeChoisi" Width="80" Height="80"/>
         </Canvas>
     </Grid>
 </Window>
