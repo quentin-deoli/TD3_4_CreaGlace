@@ -127,8 +127,7 @@ namespace CreaGlace
             bouleEnChute.Height = 60;
 
             int num = hasard.Next(1, 6);
-            bouleEnChute.Source = new BitmapImage(
-                new Uri("Images/image" + num + ".png", UriKind.Relative));
+            bouleEnChute.Source = new BitmapImage(new Uri("Images/image" + num + ".png", UriKind.Relative));
 
             double x = hasard.Next(0, (int)(canvasJeu.ActualWidth - bouleEnChute.Width));
 
@@ -144,7 +143,14 @@ namespace CreaGlace
             if (e.Key == Key.P)
             {
                 enPause = !enPause;
-                txtPause.Visibility = enPause ? Visibility.Visible : Visibility.Collapsed;
+               if (enPause == true)
+                  {
+                    txtPause.Visibility = Visibility.Visible;
+                  }
+               else
+                  {
+                    txtPause.Visibility = Visibility.Collapsed;
+                  }
                 return;
             }
 
