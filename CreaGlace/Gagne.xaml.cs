@@ -8,8 +8,6 @@ namespace CreaGlace
         public Gagne(int scoreFinal, string tempsFinal)
         {
             InitializeComponent();
-            txtScore.Text = scoreFinal.ToString();
-            txtTime.Text = tempsFinal;
         }
 
         private void BoutonMenu_Click(object sender, RoutedEventArgs e)
