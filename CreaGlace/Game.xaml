@@ -21,6 +21,7 @@
             <TextBlock x:Name="txtPause" Text="PAUSE" FontSize="60" FontWeight="Bold" Foreground="#FFDA637B" Visibility="Collapsed" Canvas.Left="300" Canvas.Top="150"/>
 
             <Image x:Name="imgConeChoisi" Width="80" Height="80"/>
+            <Button Content="CHEAT" Width="60" Height="24" HorizontalAlignment="Left" VerticalAlignment="Top" Background="LightGray" FontWeight="Bold" Click="BoutonCheat_Click" RenderTransformOrigin="0.5,1.862" Canvas.Left="716" Canvas.Top="47"/>
         </Canvas>
     </Grid>
 </Window>

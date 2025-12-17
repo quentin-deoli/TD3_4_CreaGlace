@@ -11,11 +11,12 @@ namespace CreaGlace
 {
     public partial class Game : Window
     {
+        int vitesseChute = 5;
+        int vitesseCone = 20;
+
         const int METTRE_A_JOUR = 20;
         const int TICKS_PAR_SECONDE = 50;
         const int TICKS_APPARITION = 70;
-        const int VITESSE_CHUTE = 6;
-        const int VITESSE_DEPLACEMENT = 25;
         const int VIES_MAX = 3;
 
         Random hasard = new Random();
@@ -23,13 +24,10 @@ namespace CreaGlace
         DispatcherTimer timer = new DispatcherTimer();
 
         Image bouleEnChute = null;
-
-  
         Image[] tableauBoules = new Image[4];
 
-        int boulesSurCone = 0; 
-        int totalBoules = 0;   
-
+        int boulesSurCone = 0;
+        int totalBoules = 0;
         int score = 0;
         int viesPerdues = 0;
         int numeroCone;
@@ -65,7 +63,6 @@ namespace CreaGlace
         void BoucleDuJeu(object sender, EventArgs e)
         {
             if (enPause) return;
-
             GererTemps();
             GererBoule();
         }
@@ -73,7 +70,6 @@ namespace CreaGlace
         void GererTemps()
         {
             ticksTemps++;
-
             if (ticksTemps >= TICKS_PAR_SECONDE)
             {
                 ticksTemps = 0;
@@ -85,7 +81,6 @@ namespace CreaGlace
         void GererBoule()
         {
             ticksBoule++;
-
             if (bouleEnChute == null)
             {
                 if (ticksBoule >= TICKS_APPARITION)
@@ -97,7 +92,7 @@ namespace CreaGlace
             else
             {
                 double y = Canvas.GetTop(bouleEnChute);
-                Canvas.SetTop(bouleEnChute, y + VITESSE_CHUTE);
+                Canvas.SetTop(bouleEnChute, y + vitesseChute);
 
                 if (TestCollision())
                 {
@@ -115,15 +110,11 @@ namespace CreaGlace
             bouleEnChute = new Image();
             bouleEnChute.Width = 60;
             bouleEnChute.Height = 60;
-
             int num = hasard.Next(1, 6);
             bouleEnChute.Source = new BitmapImage(new Uri("Images/image" + num + ".png", UriKind.Relative));
-
             double x = hasard.Next(0, (int)(canvasJeu.ActualWidth - bouleEnChute.Width));
-
             Canvas.SetLeft(bouleEnChute, x);
             Canvas.SetTop(bouleEnChute, -60);
-
             canvasJeu.Children.Add(bouleEnChute);
         }
 
@@ -133,19 +124,16 @@ namespace CreaGlace
             {
                 enPause = !enPause;
                 JouerLeSon("pause.mp3");
-
-                if (enPause == true) txtPause.Visibility = Visibility.Visible;
+                if (enPause) txtPause.Visibility = Visibility.Visible;
                 else txtPause.Visibility = Visibility.Collapsed;
-
                 return;
             }
 
             if (enPause) return;
 
             double x = Canvas.GetLeft(imgConeChoisi);
-
-            if (e.Key == Key.Left) x -= VITESSE_DEPLACEMENT;
-            if (e.Key == Key.Right) x += VITESSE_DEPLACEMENT;
+            if (e.Key == Key.Left) x -= vitesseCone;
+            if (e.Key == Key.Right) x += vitesseCone;
 
             if (x < 0) x = 0;
             if (x + imgConeChoisi.Width > canvasJeu.ActualWidth)
@@ -153,7 +141,6 @@ namespace CreaGlace
 
             Canvas.SetLeft(imgConeChoisi, x);
 
-            // On déplace uniquement les boules qui sont sur le cône (variable boulesSurCone)
             for (int i = 0; i < boulesSurCone; i++)
             {
                 Canvas.SetLeft(tableauBoules[i], x + 10);
@@ -163,15 +150,8 @@ namespace CreaGlace
         bool TestCollision()
         {
             Image cible;
-
-            if (boulesSurCone == 0)
-            {
-                cible = imgConeChoisi;
-            }
-            else
-            {
-                cible = tableauBoules[boulesSurCone - 1];
-            }
+            if (boulesSurCone == 0) cible = imgConeChoisi;
+            else cible = tableauBoules[boulesSurCone - 1];
 
             double bouleBas = Canvas.GetTop(bouleEnChute) + bouleEnChute.Height;
             double bouleGauche = Canvas.GetLeft(bouleEnChute);
@@ -181,10 +161,7 @@ namespace CreaGlace
             double cibleGauche = Canvas.GetLeft(cible);
             double cibleDroite = cibleGauche + cible.Width;
 
-            bool toucheHauteur = bouleBas >= cibleHaut && bouleBas <= cibleHaut + 15;
-            bool toucheLargeur = bouleDroite > cibleGauche && bouleGauche < cibleDroite;
-
-            return toucheHauteur && toucheLargeur;
+            return (bouleBas >= cibleHaut && bouleBas <= cibleHaut + 15) && (bouleDroite > cibleGauche && bouleGauche < cibleDroite);
         }
 
         void AttraperBoule()
@@ -193,41 +170,31 @@ namespace CreaGlace
             score += 10;
             txtScore.Text = "Score : " + score;
 
-            // On stocke la boule dans le petit tableau (de 0 à 3)
             tableauBoules[boulesSurCone] = bouleEnChute;
-
-            // Placement visuel
             double nouvelleHauteur = 270 - (boulesSurCone * 50);
             Canvas.SetTop(bouleEnChute, nouvelleHauteur);
 
-            // On incrémente les deux compteurs
             boulesSurCone++;
-            totalBoules++; // Celui-ci ne revient jamais à 0, il compte jusqu'à 50
+            totalBoules++;
 
-            // MODIF 2 : Gestion de la boucle de 4
-            // Si le cône est plein (4 boules)
             if (boulesSurCone == 4)
             {
-                JouerLeSon("bonus.mp3"); // Petit son de validation
-                score += 50; // Bonus de points
+                JouerLeSon("bonus.mp3");
+                score += 50;
                 txtScore.Text = "Score : " + score;
-
-                // On vide le visuel (on retire les 4 images de l'écran)
                 for (int i = 0; i < 4; i++)
                 {
                     canvasJeu.Children.Remove(tableauBoules[i]);
                     tableauBoules[i] = null;
                 }
-
-                // On remet le compteur du cône à 0 (mais PAS le totalBoules !)
                 boulesSurCone = 0;
             }
 
-            // MODIF 3 : Victoire basée sur le TOTAL
-            if (totalBoules >= 50)
+            if (totalBoules >= 20)
             {
                 timer.Stop();
-                Gagne fenetreVictoire = new Gagne(score, txtTemps.Text);
+                string chrono = (secondesEcoulees / 60).ToString("D2") + ":" + (secondesEcoulees % 60).ToString("D2");
+                Gagne fenetreVictoire = new Gagne(score, chrono);
                 fenetreVictoire.Show();
                 this.Close();
                 return;
@@ -239,20 +206,28 @@ namespace CreaGlace
         void PerdreVie()
         {
             JouerLeSon("fail.mp3");
-
             canvasJeu.Children.Remove(bouleEnChute);
             bouleEnChute = null;
-
             viesPerdues++;
 
             if (viesPerdues >= VIES_MAX)
             {
                 JouerLeSon("gameover.mp3");
                 timer.Stop();
-                GameOver fin = new GameOver(score, txtTemps.Text);
+                string chrono = (secondesEcoulees / 60).ToString("D2") + ":" + (secondesEcoulees % 60).ToString("D2");
+                GameOver fin = new GameOver(score, chrono);
                 fin.Show();
                 Close();
             }
+        }
+
+        private void BoutonCheat_Click(object sender, RoutedEventArgs e)
+        {
+            score += 500;
+            txtScore.Text = "Score : " + score;
+            vitesseCone = 65;
+            txtScore.Foreground = Brushes.Red;
+            this.Focus();
         }
 
         void JouerLeSon(string fichier)

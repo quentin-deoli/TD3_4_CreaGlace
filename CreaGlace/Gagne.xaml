@@ -37,19 +37,13 @@
                     </TextBlock.Foreground>
                 </TextBlock>
 
-                <TextBlock Text="SCORE DE 500 ATTEINT !" FontSize="18" FontStyle="Italic" Foreground="Black" HorizontalAlignment="Center" Margin="0,0,0,30"/>
+                <TextBlock FontSize="18" FontStyle="Italic" Foreground="Black" HorizontalAlignment="Center" Margin="0,0,0,30"><Run Language="fr-fr" Text="2"/><Run Text="0 BOULES"/><Run Text=" ATTEINT !"/></TextBlock>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,30">
 
-                    <StackPanel Margin="20,0">
-                        <TextBlock Text="SCORE" FontSize="14" FontWeight="Bold" Foreground="Orange"/>
-                        <TextBlock x:Name="txtScore" Text="500" FontSize="30" FontWeight="Bold" Foreground="Black"/>
-                    </StackPanel>
+                    <StackPanel Margin="20,0"/>
 
-                    <StackPanel Margin="20,0">
-                        <TextBlock Text="CHRONO" FontSize="14" FontWeight="Bold" Foreground="Orange"/>
-                        <TextBlock x:Name="txtTime" Text="01:20" FontSize="30" FontWeight="Bold" Foreground="Black"/>
-                    </StackPanel>
+                    <StackPanel Margin="20,0"/>
 
                 </StackPanel>
 
