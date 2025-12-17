@@ -7,7 +7,7 @@
             </Image.OpacityMask>
         </Image>
 
-        <Border Width="400" Background="#DDFFFFFF" CornerRadius="20" Padding="20" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Border Width="400" Background="#DDFFFFFF" CornerRadius="60" Padding="20" VerticalAlignment="Center" HorizontalAlignment="Center">
 
             <StackPanel>
 

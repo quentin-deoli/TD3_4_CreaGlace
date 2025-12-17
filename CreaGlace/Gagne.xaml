@@ -9,7 +9,7 @@
 
         <Rectangle Fill="Black" Opacity="0.5"/>
 
-        <Border Width="500" CornerRadius="20" BorderThickness="5" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Border Width="500" CornerRadius="50" BorderThickness="5" VerticalAlignment="Center" HorizontalAlignment="Center">
 
             <Border.BorderBrush>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
