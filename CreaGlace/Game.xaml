@@ -20,7 +20,6 @@
 
             <TextBlock x:Name="txtPause" Text="PAUSE" FontSize="60" FontWeight="Bold" Foreground="#FFDA637B" Visibility="Collapsed" Canvas.Left="300" Canvas.Top="150"/>
 
-            <!-- Cône choisi -->
             <Image x:Name="imgConeChoisi" Width="80" Height="80"/>
         </Canvas>
     </Grid>

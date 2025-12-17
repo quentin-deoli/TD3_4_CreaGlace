@@ -9,7 +9,6 @@ namespace CreaGlace
         private DispatcherTimer timer;
         private int coneChoisi;
 
-        // Constructeur : reçoit le numéro du cône
         public Regle(int coneChoisi)
         {
             InitializeComponent();
@@ -17,10 +16,8 @@ namespace CreaGlace
 
             this.coneChoisi = coneChoisi;
 
-            // Affichage du cône choisi
             AfficherCone();
 
-            // Initialisation du minuteur (3 secondes)
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(3);
             timer.Tick += FinDuCompteur_Tick;
