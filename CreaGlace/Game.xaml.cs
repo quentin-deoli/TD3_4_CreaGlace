@@ -56,7 +56,6 @@ namespace CreaGlace
             double x = (canvasJeu.ActualWidth - imgConeChoisi.Width) / 2;
             Canvas.SetLeft(imgConeChoisi, x);
             Canvas.SetTop(imgConeChoisi, canvasJeu.ActualHeight - 100);
-
             timer.Start();
         }
 
