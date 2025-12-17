@@ -22,7 +22,6 @@ namespace CreaGlace
             timer.Interval = TimeSpan.FromSeconds(3);
             timer.Tick += FinDuCompteur_Tick;
             timer.Start();
-
         }
 
         // Affiche l'image correspondant au cône choisi

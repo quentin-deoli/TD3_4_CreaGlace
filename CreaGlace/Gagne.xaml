@@ -7,27 +7,55 @@
     <Grid>
         <Image Source="/imgFondJeu.png" Stretch="UniformToFill"/>
 
-        <Border Width="400" Background="#DDFFFFFF" CornerRadius="20" BorderBrush="Green" BorderThickness="3" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Rectangle Fill="Black" Opacity="0.5"/>
+
+        <Border Width="500" CornerRadius="20" BorderThickness="5" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+            <Border.BorderBrush>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="Gold" Offset="0"/>
+                    <GradientStop Color="OrangeRed" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+
+            <Border.Background>
+                <SolidColorBrush Color="LightYellow" Opacity="0.9"/>
+            </Border.Background>
+
+            <Border.Effect>
+                <DropShadowEffect Color="Gold" BlurRadius="30" ShadowDepth="0"/>
+            </Border.Effect>
 
             <StackPanel Margin="20">
 
-                <TextBlock Text="C'EST GAGNÉ !" FontSize="40" FontWeight="Bold" Foreground="Green" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                <TextBlock Text="VICTOIRE !" FontSize="50" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5">
+                    <TextBlock.Foreground>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="Orange" Offset="0"/>
+                            <GradientStop Color="Gold" Offset="1"/>
+                        </LinearGradientBrush>
+                    </TextBlock.Foreground>
+                </TextBlock>
 
-                <TextBlock Text="Panier rempli : 50/50" FontSize="20" HorizontalAlignment="Center" Margin="0,0,0,30"/>
-
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
-                    <TextBlock Text="Score Final : " FontSize="22" FontWeight="SemiBold"/>
-                    <TextBlock x:Name="txtScore" Text="0" FontSize="22" FontWeight="Bold" Foreground="Green"/>
-                </StackPanel>
+                <TextBlock Text="SCORE DE 500 ATTEINT !" FontSize="18" FontStyle="Italic" Foreground="Black" HorizontalAlignment="Center" Margin="0,0,0,30"/>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,30">
-                    <TextBlock Text="Temps : " FontSize="22" FontWeight="SemiBold"/>
-                    <TextBlock x:Name="txtTime" Text="00:00" FontSize="22" FontWeight="Bold" Foreground="Green"/>
+
+                    <StackPanel Margin="20,0">
+                        <TextBlock Text="SCORE" FontSize="14" FontWeight="Bold" Foreground="Orange"/>
+                        <TextBlock x:Name="txtScore" Text="500" FontSize="30" FontWeight="Bold" Foreground="Black"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="20,0">
+                        <TextBlock Text="CHRONO" FontSize="14" FontWeight="Bold" Foreground="Orange"/>
+                        <TextBlock x:Name="txtTime" Text="01:20" FontSize="30" FontWeight="Bold" Foreground="Black"/>
+                    </StackPanel>
+
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Content="MENU" Width="120" Height="40" Background="LightBlue" FontWeight="Bold" Margin="10" Click="BoutonMenu_Click"/>
-                    <Button Content="QUITTER" Width="120" Height="40" Background="IndianRed" FontWeight="Bold" Margin="10" Click="BoutonQuit_Click"/>
+                    <Button Content="REJOUER" Width="130" Height="40" Background="Gold" FontWeight="Bold" Margin="10" Click="BoutonMenu_Click"/>
+                    <Button Content="QUITTER" Width="130" Height="40" Background="IndianRed" Foreground="White" FontWeight="Bold" Margin="10" Click="BoutonQuit_Click"/>
                 </StackPanel>
 
             </StackPanel>

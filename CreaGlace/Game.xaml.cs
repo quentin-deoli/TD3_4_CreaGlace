@@ -24,11 +24,11 @@ namespace CreaGlace
 
         Image bouleEnChute = null;
 
-        // MODIF 1 : Tableau réduit à 4 places (car on vide après 4)
+  
         Image[] tableauBoules = new Image[4];
 
-        int boulesSurCone = 0; // Compteur pour l'empilement (0 à 4)
-        int totalBoules = 0;   // Compteur pour la victoire (0 à 50)
+        int boulesSurCone = 0; 
+        int totalBoules = 0;   
 
         int score = 0;
         int viesPerdues = 0;
